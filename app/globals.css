@@ -1,24 +1,20 @@
-/* Design tokens: the only place colors, spacing, radii, typography and motion are defined. */
+/* Design tokens: the only place colors, spacing, radii, typography and motion are defined.
+   Art direction: "lamp-lit museum vitrine at night in Ur" (issue #32). */
 :root {
-  --color-bg: #f6ead0;
-  --color-fg: #2a1a0c;
-  --color-muted: #6a4a2a;
-  --color-accent: #0b4f8a;
-  --color-border: #b98f4e;
-  --color-backdrop: #10253f;
-  --color-backdrop-glow: #1d4a74;
-  --color-gold: #d9a441;
-  --color-gold-deep: #8a5a14;
-  --color-lapis: #1f4e8c;
-  --color-lapis-deep: #123058;
-  --color-carnelian: #b3402a;
-  --color-sand: #e3c48a;
-  --color-sand-deep: #c79a52;
-  --color-sand-dark: #9a6f33;
-  --color-night: #0a1a30;
-  --color-shell: #f4ead2;
-  --color-wood: #7a4a22;
-  --color-wood-dark: #4a2a10;
+  --bitumen: #120d09;
+  --bitumen-2: #1e150e;
+  --night: #0b1830;
+  --night-2: #173358;
+  --lapis: #2a5db0;
+  --lapis-deep: #143266;
+  --carnelian: #c9503a;
+  --shell: #f3e8cf;
+  --shell-dim: #cdbd98;
+  --gold: #e2b04a;
+  --gold-deep: #8f6317;
+  --ember: #ff9a3c;
+  --sand: #e3cc9a;
+  --gold-line: rgb(226 176 74 / 0.45);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -26,17 +22,18 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
+  --radius-md: 1rem;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+  --font-display: "Palatino Linotype", Palatino, Georgia, serif;
   --text-base: 1rem;
   --text-xl: 1.5rem;
-  --shadow-panel: 0 0.5rem 1.5rem rgb(0 0 0 / 0.35);
-  --shadow-piece: 0 0.15rem 0.25rem rgb(0 0 0 / 0.45);
+  --shadow-panel: 0 0.6rem 1.8rem rgb(0 0 0 / 0.5);
+  --shadow-piece: 0 0.15rem 0.3rem rgb(0 0 0 / 0.55);
+  --glow-ember: 0 0 1.5rem rgb(255 154 60 / 0.45);
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 *,
@@ -48,72 +45,55 @@
 body {
   margin: 0;
   min-height: 100vh;
-  /* Scene: starry dusk sky, a stepped ziggurat on the horizon and sand dunes in front. */
+  overflow-x: hidden;
+  display: flow-root;
+  /* Scene: starry night, ember glow behind the board and a stepped ziggurat on the horizon. */
   background:
-    linear-gradient(180deg, transparent 0 70%, var(--color-sand-dark) 70% 100%) bottom / 100% 12rem no-repeat,
-    radial-gradient(ellipse 60% 4rem at 20% 100%, var(--color-sand-deep) 0 99%, transparent 100%) bottom / 100% 6rem no-repeat,
-    radial-gradient(ellipse 70% 5rem at 85% 100%, var(--color-sand) 0 99%, transparent 100%) bottom / 100% 6rem no-repeat,
-    linear-gradient(var(--color-wood-dark), var(--color-wood-dark)) 82% calc(100% - 5.5rem) / 6rem 0.8rem no-repeat,
-    linear-gradient(var(--color-wood-dark), var(--color-wood-dark)) 82% calc(100% - 6.3rem) / 4.5rem 0.8rem no-repeat,
-    linear-gradient(var(--color-wood-dark), var(--color-wood-dark)) 82% calc(100% - 7.1rem) / 3rem 0.8rem no-repeat,
-    radial-gradient(circle at 12% 18%, rgb(255 248 230 / 0.9) 0 1px, transparent 2px),
-    radial-gradient(circle at 70% 10%, rgb(255 248 230 / 0.8) 0 1px, transparent 2px),
-    radial-gradient(circle at 38% 30%, rgb(255 248 230 / 0.7) 0 1px, transparent 2px),
-    radial-gradient(circle at 90% 38%, rgb(255 248 230 / 0.7) 0 1px, transparent 2px),
-    radial-gradient(ellipse at 50% 0%, var(--color-backdrop-glow), transparent 65%),
-    linear-gradient(180deg, var(--color-night), var(--color-backdrop));
+    linear-gradient(var(--bitumen), var(--bitumen)) 0 100% / 100% 1.5rem no-repeat,
+    linear-gradient(var(--bitumen-2), var(--bitumen-2)) 82% calc(100% - 1.5rem) / 8rem 0.8rem no-repeat,
+    linear-gradient(var(--bitumen-2), var(--bitumen-2)) 82% calc(100% - 2.3rem) / 6rem 0.8rem no-repeat,
+    linear-gradient(var(--bitumen-2), var(--bitumen-2)) 82% calc(100% - 3.1rem) / 4rem 0.8rem no-repeat,
+    radial-gradient(circle at 12% 18%, rgb(243 232 207 / 0.8) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 10%, rgb(243 232 207 / 0.7) 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 30%, rgb(243 232 207 / 0.6) 0 1px, transparent 2px),
+    radial-gradient(circle at 90% 38%, rgb(243 232 207 / 0.6) 0 1px, transparent 2px),
+    radial-gradient(circle at 25% 60%, rgb(243 232 207 / 0.5) 0 1px, transparent 2px),
+    radial-gradient(ellipse 70% 55% at 50% 55%, rgb(255 154 60 / 0.2), transparent 70%),
+    radial-gradient(ellipse at 50% -10%, var(--night-2), var(--night) 65%);
   background-attachment: fixed;
-  color: var(--color-fg);
+  color: var(--shell);
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: 1.5;
 }
 
-.page {
-  max-width: 48rem;
-  margin: var(--space-6) auto;
-  padding: var(--space-8) var(--space-6);
-  background: linear-gradient(180deg, #fbf1d9, var(--color-bg));
-  border: 3px solid var(--color-gold-deep);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-panel), inset 0 0 0 4px var(--color-bg), inset 0 0 0 5px var(--color-gold);
-  position: relative;
-}
-
-/* Frieze: a band of lapis and gold squares along the top of the page, like a temple wall. */
-.page::before {
-  content: "";
-  display: block;
-  height: 0.75rem;
-  margin: calc(-1 * var(--space-4)) 0 var(--space-4);
-  background:
-    repeating-linear-gradient(90deg, var(--color-gold) 0 0.5rem, var(--color-lapis) 0.5rem 1rem, var(--color-carnelian) 1rem 1.5rem, var(--color-lapis) 1.5rem 2rem);
-  border: 1px solid var(--color-gold-deep);
-  border-radius: 2px;
-}
-
 h1,
-h2 {
+h2,
+.turn-indicator,
+.stock-name {
   font-family: var(--font-display);
-  color: var(--color-lapis-deep);
+  letter-spacing: 0.04em;
 }
 
-h1 {
-  font-size: var(--text-xl);
-  margin: 0 0 var(--space-2);
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .muted {
-  color: var(--color-muted);
+  color: var(--shell-dim);
 }
 
+/* Visible focus on every control. */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.fade-in {
-  animation: fade-in var(--duration-normal) var(--ease-out) both;
+  outline: 3px solid var(--shell);
+  outline-offset: 3px;
 }
 
 @keyframes fade-in {
@@ -123,13 +103,42 @@ h1 {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+.fade-in {
+  animation: fade-in var(--duration-normal) var(--ease-out) both;
+}
+
+/* Gilded panel: dark glass with a double gold line. */
+.page,
+.stock,
+.dice-tray {
+  background: linear-gradient(180deg, rgb(40 28 18 / 0.92), rgb(18 13 9 / 0.94));
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel), inset 0 0 0 4px rgb(18 13 9 / 0.9), inset 0 0 0 5px rgb(226 176 74 / 0.2);
+}
+
+.page {
+  max-width: 48rem;
+  margin: var(--space-6) auto;
+  padding: var(--space-8) var(--space-6);
+  position: relative;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--gold);
+}
+
+/* Home */
+.home h1,
+.rules h1 {
+  margin: 0 0 var(--space-3);
+  color: var(--gold);
+  font-size: 2.25rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .mode-list {
@@ -143,76 +152,69 @@ h1 {
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-4) var(--space-6);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-md);
-  background: #fff8e6;
-  box-shadow: 0 2px 0 var(--color-gold-deep);
-  color: var(--color-fg);
+  border: 1px solid var(--gold);
+  background: linear-gradient(180deg, rgb(243 203 106 / 0.12), rgb(18 13 9 / 0.6));
+  clip-path: polygon(1.25rem 0, calc(100% - 1.25rem) 0, 100% 50%, calc(100% - 1.25rem) 100%, 1.25rem 100%, 0 50%);
+  color: var(--shell);
   text-decoration: none;
-  transition: transform var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.button-primary {
+  background: linear-gradient(180deg, #f3cb6a, #b98424);
+  color: var(--bitumen);
 }
 
 .button:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-accent);
+  filter: brightness(1.12);
 }
 
-.button-primary .button-title {
-  font-weight: 600;
+.button-title {
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: var(--text-xl);
-  color: var(--color-accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .button-hint {
-  color: var(--color-muted);
+  color: var(--bitumen-2);
 }
 
-.link {
-  color: var(--color-accent);
+/* Rules page */
+.rules h2 {
+  margin-top: var(--space-6);
+  color: var(--gold);
 }
 
-/* Game board */
-:root {
-  --color-piece-one: #f2c14e;
-  --color-piece-one-edge: #8a5a14;
-  --color-piece-two: #2f5fa8;
-  --color-piece-two-edge: #0c1f40;
-  --color-cell: #e9d3a0;
-  --color-rosette: #1f4e8c;
+.rules li + li {
+  margin-top: var(--space-2);
 }
 
+/* ---------- Game board ---------- */
 .game {
   min-width: 0;
   display: grid;
-  gap: var(--space-4);
-  margin-top: var(--space-4);
-}
-
-.turn-indicator {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--color-lapis-deep);
-  margin: 0;
+  gap: var(--space-2);
+  justify-items: center;
 }
 
 .board {
+  --board-w: min(100%, 52rem, calc((100dvh - 19rem) * 2.6));
+  width: var(--board-w);
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: var(--space-1);
-  padding: var(--space-4);
-  /* Carved wooden slab with a lapis-and-gold inlay border. */
+  gap: 0.3rem;
+  padding: 1.2rem 1rem;
+  position: relative;
+  /* Dark bitumen slab, gold-beaded rim, as in a museum case. */
   background:
-    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.07) 0 2px, transparent 2px 11px),
-    linear-gradient(135deg, var(--color-wood), var(--color-wood-dark));
-  border: 4px solid var(--color-gold);
-  border-radius: var(--radius-md);
-  box-shadow:
-    var(--shadow-panel),
-    inset 0 0 0 3px var(--color-wood-dark),
-    inset 0 0 0 6px var(--color-lapis),
-    inset 0 0 0 8px var(--color-gold-deep);
+    radial-gradient(circle, var(--gold) 0 2px, transparent 3px) 0.6rem 0.4rem / 1.4rem 0.8rem repeat-x,
+    radial-gradient(circle, var(--gold) 0 2px, transparent 3px) 0.6rem calc(100% - 0.4rem) / 1.4rem 0.8rem repeat-x,
+    linear-gradient(135deg, #2b1e13, #0f0a06);
+  border: 4px solid var(--gold);
+  border-radius: 1.6rem;
+  box-shadow: var(--shadow-panel), 0 0 0 2px var(--gold-deep), inset 0 0 0 2px var(--bitumen), inset 0 0 0 3px var(--gold-deep);
 }
 
 .cell {
@@ -220,52 +222,49 @@ h1 {
   display: grid;
   place-items: center;
   position: relative;
-  /* Shell-and-lapis inlaid tile with a subtle central pattern chosen by data-pattern. */
-  background:
-    radial-gradient(circle at 50% 50%, transparent 55%, rgb(138 90 20 / 0.25) 100%),
-    var(--color-shell);
-  border: 2px solid var(--color-gold-deep);
+  background: var(--shell);
   border-radius: var(--radius-sm);
-  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.25), inset 0 -0.2rem 0 rgb(138 90 20 / 0.2);
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.25), inset 0 -0.2rem 0.4rem rgb(143 99 23 / 0.35);
 }
 
-/* Tile motifs, as on the original board: concentric eyes, dot clusters and bands. */
+/* Tile motifs, as on the original board: concentric eyes, dot clusters and crossed bands. */
 .cell[data-pattern="0"]:not([data-rosette]) {
   background:
-    radial-gradient(circle, var(--color-lapis) 0 10%, var(--color-shell) 11% 20%, var(--color-carnelian) 21% 28%, transparent 29%),
-    var(--color-shell);
+    radial-gradient(circle, var(--bitumen) 0 8%, var(--lapis) 9% 17%, var(--shell) 18% 24%, var(--carnelian) 25% 36%, transparent 37%),
+    var(--shell);
 }
 
 .cell[data-pattern="1"]:not([data-rosette]) {
   background:
-    radial-gradient(circle at 25% 25%, var(--color-lapis) 0 7%, transparent 8%),
-    radial-gradient(circle at 75% 25%, var(--color-lapis) 0 7%, transparent 8%),
-    radial-gradient(circle at 25% 75%, var(--color-lapis) 0 7%, transparent 8%),
-    radial-gradient(circle at 75% 75%, var(--color-lapis) 0 7%, transparent 8%),
-    var(--color-shell);
+    radial-gradient(circle at 25% 25%, var(--lapis) 0 9%, transparent 10%),
+    radial-gradient(circle at 75% 25%, var(--lapis) 0 9%, transparent 10%),
+    radial-gradient(circle at 25% 75%, var(--lapis) 0 9%, transparent 10%),
+    radial-gradient(circle at 75% 75%, var(--lapis) 0 9%, transparent 10%),
+    var(--shell);
 }
 
 .cell[data-pattern="2"]:not([data-rosette]) {
   background:
-    linear-gradient(135deg, transparent 0 42%, var(--color-gold) 43% 57%, transparent 58%),
-    linear-gradient(45deg, transparent 0 42%, var(--color-lapis) 43% 57%, transparent 58%),
-    var(--color-shell);
+    linear-gradient(135deg, transparent 0 40%, var(--lapis-deep) 41% 45%, var(--shell) 46% 54%, var(--lapis-deep) 55% 59%, transparent 60%),
+    linear-gradient(45deg, transparent 0 40%, var(--lapis-deep) 41% 45%, var(--shell) 46% 54%, var(--lapis-deep) 55% 59%, transparent 60%),
+    var(--carnelian);
 }
 
-/* The shared middle lane (the war lane) is tinted sandy; private lanes stay shell white. */
-.cell[data-lane="shared"]:not([data-rosette]) {
-  background-color: var(--color-sand);
+/* The shared middle lane (the war lane) is tinted sandy. */
+.cell[data-lane="shared"][data-pattern="1"]:not([data-rosette]) {
+  background-color: var(--sand);
 }
 
 /* Path cues: a corner badge marks where stones enter and leave a private lane. */
 .cell[data-cue]::after {
   position: absolute;
-  top: 1px;
-  left: 3px;
-  font-size: 0.7rem;
+  top: 2px;
+  left: 4px;
+  font-size: 0.75rem;
   line-height: 1;
   font-weight: 700;
-  color: var(--color-lapis-deep);
+  color: var(--bitumen);
+  text-shadow: 0 0 3px var(--shell);
   pointer-events: none;
 }
 
@@ -275,44 +274,60 @@ h1 {
 
 .cell[data-cue="exit"]::after {
   content: "\2691";
-  color: var(--color-carnelian);
-  text-shadow: 0 0 2px var(--color-shell);
 }
 
-/* Rosette: lapis tile with an eight-petal flower painted from gradients. */
+/* Rosette: lapis tile with an eight-petal flower (project-owned inline SVG). */
 .cell[data-rosette] {
   background:
-    radial-gradient(circle, var(--color-carnelian) 0 12%, var(--color-gold) 13% 20%, transparent 21%),
-    conic-gradient(from 22.5deg, var(--color-gold) 0 12.5%, transparent 0 25%, var(--color-gold) 0 37.5%, transparent 0 50%, var(--color-gold) 0 62.5%, transparent 0 75%, var(--color-gold) 0 87.5%, transparent 0) 50% 50% / 80% 80% no-repeat,
-    conic-gradient(from 67.5deg, var(--color-gold) 0 12.5%, transparent 0 25%, var(--color-gold) 0 37.5%, transparent 0 50%, var(--color-gold) 0 62.5%, transparent 0 75%, var(--color-gold) 0 87.5%, transparent 0) 50% 50% / 80% 80% no-repeat,
-    var(--color-rosette);
-  border-color: var(--color-gold);
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%23f3e8cf' stroke='%23143266' stroke-width='2'><path transform='rotate(0 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(45 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(90 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(135 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(180 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(225 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(270 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/><path transform='rotate(315 50 50)' d='M50 50C40 38 40 18 50 10C60 18 60 38 50 50Z'/></g><circle cx='50' cy='50' r='7' fill='%23c9503a' stroke='%23e2b04a' stroke-width='3'/></svg>") 50% 50% / 88% 88% no-repeat,
+    var(--lapis-deep);
+  box-shadow: inset 0 0 0 2px var(--gold), inset 0 0 0 4px var(--lapis-deep);
 }
 
-/* The gap between the private lanes shows the slab's carving instead of a hole. */
+/* The gap between the private lanes stays dark, like the missing squares of the original. */
 .cell-void {
-  background: radial-gradient(circle, var(--color-gold-deep) 0 8%, transparent 9%) 50% 50% / 100% 100%;
-  border: 0;
+  background: none;
   box-shadow: none;
-  opacity: 0.6;
 }
 
+/* Stones: ivory with a sun engraving (player one), lapis with a star (player two). */
 .piece {
   position: relative;
   width: 72%;
   height: 72%;
   border-radius: 50%;
-  border: 2px solid var(--color-fg);
   padding: 0;
-  box-shadow: var(--shadow-piece), inset 0 -0.2rem 0.3rem rgb(0 0 0 / 0.3), inset 0 0.15rem 0.25rem rgb(255 255 255 / 0.45);
+  box-shadow: var(--shadow-piece), inset 0 -0.2rem 0.3rem rgb(0 0 0 / 0.3), inset 0 0.15rem 0.25rem rgb(255 255 255 / 0.35);
 }
 
-/* Distinguish players by pattern as well as color: a ring versus a center dot. */
-.piece::after {
+.piece-one {
+  background: radial-gradient(circle at 35% 30%, #fffaf0, #e6d7b2 60%, #a89468);
+  border: 3px solid var(--gold-deep);
+}
+
+.piece-one::after {
   content: "";
   position: absolute;
-  inset: 28%;
+  inset: 24%;
   border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--carnelian) 0 28%, transparent 30%),
+    repeating-conic-gradient(var(--gold-deep) 0 8deg, transparent 8deg 45deg);
+  -webkit-mask: radial-gradient(circle, #000 0 98%, transparent);
+  mask: radial-gradient(circle, #000 0 98%, transparent);
+}
+
+.piece-two {
+  background: radial-gradient(circle at 35% 30%, #6c9be6, var(--lapis) 55%, #0d2250);
+  border: 3px solid var(--gold);
+}
+
+.piece-two::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  background: var(--shell);
+  clip-path: polygon(50% 0, 62% 36%, 100% 38%, 70% 60%, 81% 100%, 50% 76%, 19% 100%, 30% 60%, 0 38%, 38% 36%);
 }
 
 .piece-arrived {
@@ -329,6 +344,222 @@ h1 {
   animation: rosette-glow var(--duration-normal) var(--ease-out) both;
 }
 
+.cell-capture {
+  animation: capture-flash var(--duration-normal) var(--ease-out) both;
+}
+
+/* Legal moves: an ember ring pulses on the stone that can act. */
+.piece-movable {
+  cursor: pointer;
+  outline: 3px solid var(--ember);
+  outline-offset: 2px;
+  animation: ember-pulse 1.6s var(--ease-out) infinite;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.piece-movable:hover {
+  transform: scale(1.1);
+}
+
+@keyframes ember-pulse {
+  50% {
+    box-shadow: 0 0 1.1rem 0.2rem rgb(255 154 60 / 0.7);
+  }
+}
+
+@keyframes piece-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@keyframes piece-slide {
+  from {
+    /* A cell is the piece width / 0.72; the gap is small enough to ignore. */
+    transform: translate(calc(var(--slide-x) * 139%), calc(var(--slide-y) * 139%));
+  }
+}
+
+@keyframes piece-slide-vertical {
+  from {
+    transform: translate(calc(var(--slide-y) * 139%), calc(var(--slide-x) * 139%));
+  }
+}
+
+@keyframes rosette-glow {
+  from {
+    box-shadow: 0 0 0 var(--space-2) var(--gold);
+  }
+}
+
+@keyframes capture-flash {
+  from {
+    box-shadow: 0 0 0 var(--space-2) var(--carnelian);
+  }
+}
+
+@keyframes stone-return {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem) scale(1.3);
+  }
+}
+
+@keyframes stone-score {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.6);
+  }
+}
+
+/* ---------- Turn banner and status ---------- */
+.hud-top {
+  grid-area: top;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1) var(--space-4);
+  width: min(100%, 52rem);
+}
+
+.turn-indicator {
+  margin: 0;
+  padding: 0.3rem 1.4rem;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #f3cb6a, #b98424);
+  box-shadow: 0 4px 14px rgb(255 154 60 / 0.4);
+  color: var(--bitumen);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: fade-in var(--duration-normal) var(--ease-out) both;
+}
+
+.turn-indicator[data-player="two"] {
+  background: linear-gradient(180deg, #6c9be6, var(--lapis));
+  box-shadow: 0 4px 14px rgb(42 93 176 / 0.5);
+  color: var(--shell);
+}
+
+.hud-status {
+  margin: 0;
+  color: var(--shell-dim);
+  font-size: 0.9rem;
+}
+
+/* ---------- Player panels ---------- */
+.hud-panel {
+  min-width: 0;
+  width: min(100%, 52rem);
+}
+
+.stock {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "head stones counts"
+    "action stones counts"
+    "score score score";
+  align-items: center;
+  gap: 0 var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  transition: box-shadow var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out);
+}
+
+.stock[data-active] {
+  border-color: var(--gold);
+  box-shadow: 0 0 1.75rem rgb(255 154 60 / 0.4), inset 0 0 0 4px rgb(18 13 9 / 0.9), inset 0 0 0 5px rgb(226 176 74 / 0.6);
+}
+
+.stock > * {
+  min-width: 0;
+}
+
+.stock-head {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stock-badge {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+}
+
+.stock-name {
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.stock-tag,
+.stock-turn {
+  padding: 0.1rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.stock-tag {
+  color: var(--shell-dim);
+  outline: 1px solid rgb(205 189 152 / 0.4);
+}
+
+.stock-turn {
+  white-space: nowrap;
+  background: var(--gold);
+  color: var(--bitumen);
+}
+
+.stock-action {
+  grid-area: action;
+  margin: 0;
+  color: var(--shell-dim);
+  font-size: 0.8rem;
+}
+
+.stones {
+  grid-area: stones;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.stone {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-width: 2px;
+}
+
+button.stone {
+  min-width: 2rem;
+}
+
+.stone-board {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.stone-done {
+  opacity: 0.8;
+  filter: saturate(0.6);
+}
+
+.stone-unavailable {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+  cursor: not-allowed;
+}
+
 .stone-returned {
   animation: stone-return var(--duration-normal) var(--ease-out) both;
 }
@@ -337,87 +568,99 @@ h1 {
   animation: stone-score var(--duration-normal) var(--ease-out) both;
 }
 
-.cell-capture {
-  animation: capture-flash var(--duration-normal) var(--ease-out) both;
-}
-
-.piece-one {
-  background: radial-gradient(circle at 35% 30%, #fff1b8, var(--color-piece-one) 45%, var(--color-piece-one-edge));
-}
-
-.piece-one::after {
-  border: 2px solid var(--color-piece-one-edge);
-}
-
-.piece-two {
-  background: radial-gradient(circle at 35% 30%, #a9c6f2, var(--color-piece-two) 45%, var(--color-piece-two-edge));
-  border-color: #0c1f40;
-}
-
-.piece-two::after {
-  background: #dfe9fa;
-  inset: 36%;
-}
-
-.piece-movable {
-  cursor: pointer;
-  outline: 3px solid var(--color-carnelian);
-  outline-offset: 2px;
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-
-.piece-movable:hover {
-  transform: scale(1.1);
-}
-
-/* Dice tray: a carved wooden tray holding four pyramid dice, with the roll action beside it. */
-.dice-tray {
+.stock-counts {
+  grid-area: counts;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--shell-dim);
+}
+
+.stock-counts dt {
+  font-size: 0.7rem;
+}
+
+.stock-counts dd {
+  margin: 0;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.stock-score {
+  grid-area: score;
+  height: 4px;
+  margin-top: var(--space-1);
+  border-radius: 2px;
+  background: rgb(0 0 0 / 0.5);
+  overflow: hidden;
+}
+
+.stock-score-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+/* ---------- Dock: dice tray with the Roll action ---------- */
+.dice-tray {
+  display: flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: #fff8e6;
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-md);
-  box-shadow: 0 2px 0 var(--color-gold-deep);
+  padding: var(--space-2) var(--space-4);
+  height: 100%;
 }
 
 .dice-bed {
   flex: 0 0 auto;
-  padding: var(--space-3) var(--space-4);
-  background:
-    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.07) 0 2px, transparent 2px 11px),
-    linear-gradient(135deg, var(--color-wood), var(--color-wood-dark));
-  border: 3px solid var(--color-gold-deep);
-  border-radius: var(--radius-md);
-  box-shadow: inset 0 3px 8px rgb(0 0 0 / 0.55);
+  padding: var(--space-2) var(--space-3);
+  background: rgb(0 0 0 / 0.45);
+  border-radius: var(--space-3);
+  box-shadow: inset 0 3px 8px rgb(0 0 0 / 0.7);
 }
 
 .dice {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .dice-info {
   display: flex;
-  flex: 1 1 12rem;
+  flex: 1 1 auto;
+  min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-1);
+  gap: 0.1rem;
 }
 
 .dice-info p {
   margin: 0;
 }
 
-/* Each pyramid die is a triangle; a marked tip carries a carnelian dot. */
+/* The status line already announces the same text; keep these for screen readers only. */
+.dice-hint,
+.dice-roller {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .die {
   position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.1rem;
+  height: 2.1rem;
   display: block;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   background: linear-gradient(160deg, #fff6dc 0 45%, #d8c08a 46% 70%, #b79a58 71%);
@@ -440,8 +683,8 @@ h1 {
 }
 
 .die-marked .die-tip {
-  background: var(--color-carnelian);
-  box-shadow: 0 0 0 2px var(--color-gold);
+  background: var(--carnelian);
+  box-shadow: 0 0 0 2px var(--gold-deep);
 }
 
 .dice-rolling .die {
@@ -459,290 +702,18 @@ h1 {
 }
 
 .roll-result {
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
   font-weight: 700;
+  line-height: 1.2;
+  color: var(--gold);
   animation: roll-pop var(--duration-normal) var(--ease-out) both;
 }
 
 .roll-result-empty {
-  font-size: 1.1rem;
-  color: var(--color-fg);
-  opacity: 0.7;
-}
-
-.dice-button {
-  margin-top: var(--space-2);
-}
-
-.turn-indicator {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--color-lapis-deep);
-  margin: 0;
-}
-
-.board {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: var(--space-1);
-  padding: var(--space-4);
-  /* Carved wooden slab with a lapis-and-gold inlay border. */
-  background:
-    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.07) 0 2px, transparent 2px 11px),
-    linear-gradient(135deg, var(--color-wood), var(--color-wood-dark));
-  border: 4px solid var(--color-gold);
-  border-radius: var(--radius-md);
-  box-shadow:
-    var(--shadow-panel),
-    inset 0 0 0 3px var(--color-wood-dark),
-    inset 0 0 0 6px var(--color-lapis),
-    inset 0 0 0 8px var(--color-gold-deep);
-}
-
-.cell {
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  position: relative;
-  /* Shell-and-lapis inlaid tile with a subtle central pattern chosen by data-pattern. */
-  background:
-    radial-gradient(circle at 50% 50%, transparent 55%, rgb(138 90 20 / 0.25) 100%),
-    var(--color-shell);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-sm);
-  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.25), inset 0 -0.2rem 0 rgb(138 90 20 / 0.2);
-}
-
-/* Tile motifs, as on the original board: concentric eyes, dot clusters and bands. */
-.cell[data-pattern="0"]:not([data-rosette]) {
-  background:
-    radial-gradient(circle, var(--color-lapis) 0 10%, var(--color-shell) 11% 20%, var(--color-carnelian) 21% 28%, transparent 29%),
-    var(--color-shell);
-}
-
-.cell[data-pattern="1"]:not([data-rosette]) {
-  background:
-    radial-gradient(circle at 25% 25%, var(--color-lapis) 0 7%, transparent 8%),
-    radial-gradient(circle at 75% 25%, var(--color-lapis) 0 7%, transparent 8%),
-    radial-gradient(circle at 25% 75%, var(--color-lapis) 0 7%, transparent 8%),
-    radial-gradient(circle at 75% 75%, var(--color-lapis) 0 7%, transparent 8%),
-    var(--color-shell);
-}
-
-.cell[data-pattern="2"]:not([data-rosette]) {
-  background:
-    linear-gradient(135deg, transparent 0 42%, var(--color-gold) 43% 57%, transparent 58%),
-    linear-gradient(45deg, transparent 0 42%, var(--color-lapis) 43% 57%, transparent 58%),
-    var(--color-shell);
-}
-
-/* The shared middle lane (the war lane) is tinted sandy; private lanes stay shell white. */
-.cell[data-lane="shared"]:not([data-rosette]) {
-  background-color: var(--color-sand);
-}
-
-/* Path cues: a corner badge marks where stones enter and leave a private lane. */
-.cell[data-cue]::after {
-  position: absolute;
-  top: 1px;
-  left: 3px;
-  font-size: 0.7rem;
-  line-height: 1;
-  font-weight: 700;
-  color: var(--color-lapis-deep);
-  pointer-events: none;
-}
-
-.cell[data-cue="enter"]::after {
-  content: "\25B6";
-}
-
-.cell[data-cue="exit"]::after {
-  content: "\2691";
-  color: var(--color-carnelian);
-  text-shadow: 0 0 2px var(--color-shell);
-}
-
-/* Rosette: lapis tile with an eight-petal flower painted from gradients. */
-.cell[data-rosette] {
-  background:
-    radial-gradient(circle, var(--color-carnelian) 0 12%, var(--color-gold) 13% 20%, transparent 21%),
-    conic-gradient(from 22.5deg, var(--color-gold) 0 12.5%, transparent 0 25%, var(--color-gold) 0 37.5%, transparent 0 50%, var(--color-gold) 0 62.5%, transparent 0 75%, var(--color-gold) 0 87.5%, transparent 0) 50% 50% / 80% 80% no-repeat,
-    conic-gradient(from 67.5deg, var(--color-gold) 0 12.5%, transparent 0 25%, var(--color-gold) 0 37.5%, transparent 0 50%, var(--color-gold) 0 62.5%, transparent 0 75%, var(--color-gold) 0 87.5%, transparent 0) 50% 50% / 80% 80% no-repeat,
-    var(--color-rosette);
-  border-color: var(--color-gold);
-}
-
-/* The gap between the private lanes shows the slab's carving instead of a hole. */
-.cell-void {
-  background: radial-gradient(circle, var(--color-gold-deep) 0 8%, transparent 9%) 50% 50% / 100% 100%;
-  border: 0;
-  box-shadow: none;
-  opacity: 0.6;
-}
-
-.piece {
-  position: relative;
-  width: 72%;
-  height: 72%;
-  border-radius: 50%;
-  border: 2px solid var(--color-fg);
-  padding: 0;
-  box-shadow: var(--shadow-piece), inset 0 -0.2rem 0.3rem rgb(0 0 0 / 0.3), inset 0 0.15rem 0.25rem rgb(255 255 255 / 0.45);
-}
-
-/* Distinguish players by pattern as well as color: a ring versus a center dot. */
-.piece::after {
-  content: "";
-  position: absolute;
-  inset: 28%;
-  border-radius: 50%;
-}
-
-.piece-arrived {
-  animation: piece-arrive var(--duration-normal) var(--ease-out) both;
-}
-
-/* A piece that moved between squares slides in from where it was; entering pieces pop in. */
-.piece[style*="--slide-x"] {
-  animation-name: piece-slide;
-  z-index: 1;
-}
-
-.cell-rosette-land {
-  animation: rosette-glow var(--duration-normal) var(--ease-out) both;
-}
-
-.stone-returned {
-  animation: stone-return var(--duration-normal) var(--ease-out) both;
-}
-
-.stone-scored {
-  animation: stone-score var(--duration-normal) var(--ease-out) both;
-}
-
-.cell-capture {
-  animation: capture-flash var(--duration-normal) var(--ease-out) both;
-}
-
-.piece-one {
-  background: radial-gradient(circle at 35% 30%, #fff1b8, var(--color-piece-one) 45%, var(--color-piece-one-edge));
-}
-
-.piece-one::after {
-  border: 2px solid var(--color-piece-one-edge);
-}
-
-.piece-two {
-  background: radial-gradient(circle at 35% 30%, #a9c6f2, var(--color-piece-two) 45%, var(--color-piece-two-edge));
-  border-color: #0c1f40;
-}
-
-.piece-two::after {
-  background: #dfe9fa;
-  inset: 36%;
-}
-
-.piece-movable {
-  cursor: pointer;
-  outline: 3px solid var(--color-carnelian);
-  outline-offset: 2px;
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-
-.piece-movable:hover {
-  transform: scale(1.1);
-}
-
-.dice {
-  display: inline-flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: var(--space-2);
-  animation: roll-pop var(--duration-normal) var(--ease-out) both;
-}
-
-/* Each tetrahedral die shows a marked (gold dot) or blank tip. */
-.die {
-  width: 2rem;
-  height: 2rem;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(160deg, #fbf1d9, #d8c08a);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: 0.3rem;
-  transform: rotate(45deg) scale(0.8);
-  box-shadow: var(--shadow-piece);
-}
-
-.die-marked::after {
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: var(--color-carnelian);
-}
-
-.roll-result {
-  font-weight: 700;
-  display: inline-block;
-  animation: roll-pop var(--duration-normal) var(--ease-out) both;
-}
-
-.turn-indicator {
-  animation: fade-in var(--duration-normal) var(--ease-out) both;
-}
-
-.turn-won {
-  color: var(--color-carnelian);
-  animation: roll-pop var(--duration-normal) var(--ease-out) both;
-}
-
-.link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-}
-
-@keyframes piece-arrive {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-}
-
-@keyframes piece-slide {
-  from {
-    /* A cell is the piece width / 0.72; the gap is small enough to ignore. */
-    transform: translate(calc(var(--slide-x) * 139%), calc(var(--slide-y) * 139%));
-  }
-}
-
-@keyframes rosette-glow {
-  from {
-    box-shadow: 0 0 0 var(--space-2) var(--color-gold);
-  }
-}
-
-@keyframes stone-return {
-  from {
-    opacity: 0;
-    transform: translateY(-0.75rem) scale(1.3);
-  }
-}
-
-@keyframes stone-score {
-  from {
-    opacity: 0;
-    transform: translateY(0.75rem) scale(0.6);
-  }
-}
-
-@keyframes capture-flash {
-  from {
-    box-shadow: 0 0 0 var(--space-2) var(--color-carnelian);
-  }
+  font-size: 1rem;
+  color: var(--shell-dim);
+  font-weight: 400;
 }
 
 @keyframes roll-pop {
@@ -777,473 +748,363 @@ h1 {
 }
 
 @keyframes tray-shake {
-  0%, 100% { transform: translateX(0); }
-  15% { transform: translateX(-4px) rotate(-1deg); }
-  30% { transform: translateX(4px) rotate(1deg); }
-  45% { transform: translateX(-3px); }
-  60% { transform: translateX(3px); }
-  80% { transform: translateX(-1px); }
-}
-
-@media (max-width: 30rem) {
-  .board {
-    gap: 2px;
+  0%,
+  100% {
+    transform: translateX(0);
   }
-
-  .cell {
-    border-radius: 2px;
+  15% {
+    transform: translateX(-4px) rotate(-1deg);
   }
-
-  .page {
-    margin: var(--space-2);
-    padding: var(--space-4) var(--space-3);
+  30% {
+    transform: translateX(4px) rotate(1deg);
   }
-
-  .board {
-    padding: var(--space-2);
+  45% {
+    transform: translateX(-3px);
   }
-
-  .stocks >   .controls {
-    gap: var(--space-2) var(--space-4);
+  60% {
+    transform: translateX(3px);
   }
-
-  .dice-button {
-    align-self: stretch;
+  80% {
+    transform: translateX(-1px);
   }
 }
 
-/* Rules page */
-.rules h2 {
-  margin-top: var(--space-6);
-}
-
-.rules li + li {
-  margin-top: var(--space-2);
-}
-
-/* Reserve stones: each player's seven stones, grouped as reserve, on board and finished. */
-.stones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-}
-
-.stone {
-  flex: none;
-  width: 2.75rem;
-  height: 2.75rem;
-}
-
-.stone-board {
-  opacity: 0.55;
-  border-style: dashed;
-}
-
-.stone-done {
-  opacity: 0.8;
-  filter: saturate(0.6);
-}
-
-.stone-unavailable {
-  opacity: 0.4;
-  filter: grayscale(0.6);
-  cursor: not-allowed;
-}
-
-button.stone {
-  min-width: 2.75rem;
-}
-
-/* Reduced motion: no sliding or popping; the last move stays marked with a static ring instead. */
-@media (prefers-reduced-motion: reduce) {
-  .dice-rolling .die,
-  .dice-settled .die,
-  .dice-tray[data-rolling] .dice-bed,
-  .roll-result,
-  .piece-arrived,
-  .cell-capture,
-  .cell-rosette-land,
-  .stone-returned,
-  .stone-scored {
-    animation: none !important;
-  }
-
-  .piece-arrived,
-  .stone-returned,
-  .stone-scored {
-    outline: 3px solid var(--color-gold);
-    outline-offset: 2px;
-  }
-
-  .cell-capture {
-    box-shadow: inset 0 0 0 var(--space-1) var(--color-carnelian);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* Low-motion roll: the result appears at once, framed by a static ring. */
-  .dice-settled .die-marked {
-    filter: drop-shadow(0 0 3px var(--color-gold)) drop-shadow(0 0 1px var(--color-gold));
-  }
-}
-
-/* Play HUD: one screen with player panels either side of the board, dice below it. */
-.page-play {
-  max-width: 72rem;
-  margin-block: var(--space-3);
-  padding: var(--space-4) var(--space-6);
-}
-
-.page-play::before {
-  height: 0.5rem;
-  margin: 0 0 var(--space-2);
-}
-
-.page-play h1 {
-  margin: 0;
-  font-size: 1.15rem;
-}
-
-.page-play .game {
-  margin-top: var(--space-2);
-  gap: var(--space-3) var(--space-4);
-  grid-template-columns: minmax(10rem, 1fr) minmax(0, 36rem) minmax(10rem, 1fr);
-  grid-template-areas:
-    "top top top"
-    "one board two"
-    "one dice two"
-    "controls controls controls";
-  align-items: start;
-}
-
-.hud-top {
-  grid-area: top;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-4);
-}
-
-.hud-panel-one { grid-area: one; }
-.hud-panel-two { grid-area: two; }
-.board { grid-area: board; }
-.hud-dice { grid-area: dice; }
-.page-play .controls { grid-area: controls; }
-
-.hud-panel,
-.hud-panel .stock {
-  min-width: 0;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-  align-items: center;
-  justify-content: center;
-}
-
-/* Turn banner: a lapis-and-gold plaque whose gem takes the active player's colour. */
-.turn-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-4);
-  font-size: 1.25rem;
-  color: var(--color-shell);
-  background: linear-gradient(180deg, var(--color-lapis), var(--color-lapis-deep));
-  border: 2px solid var(--color-gold-deep);
-  border-radius: 999px;
-  box-shadow: 0 2px 0 var(--color-gold-deep), inset 0 0 0 2px rgb(217 164 65 / 0.4);
-}
-
-.turn-indicator::before {
-  content: "";
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  border: 2px solid var(--color-gold);
-  background: var(--color-gold);
-}
-
-.turn-indicator[data-player="one"]::before {
-  background: var(--color-piece-one);
-}
-
-.turn-indicator[data-player="two"]::before {
-  background: var(--color-piece-two);
-  border-color: var(--color-shell);
-}
-
-.turn-indicator.turn-won {
-  color: var(--color-shell);
-  background: linear-gradient(180deg, var(--color-carnelian), #7c2a1a);
-}
-
-.hud-status {
-  flex: 1 1 14rem;
-  margin: 0;
-  padding: var(--space-1) var(--space-3);
-  color: var(--color-fg);
-  background: rgb(255 248 230 / 0.7);
-  border-left: 0.3rem solid var(--color-gold);
-  border-radius: var(--radius-sm);
-}
-
-/* Player panels: identity, turn marker, stones, progress and what to do next. */
-.stock {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  background: linear-gradient(180deg, #fff8e6, #f1dfb2);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-md);
-  box-shadow: 0 2px 0 var(--color-gold-deep);
-  transition: box-shadow var(--duration-normal) var(--ease-out), transform var(--duration-normal) var(--ease-out);
-}
-
-.stock[data-active] {
-  border-color: var(--color-lapis);
-  box-shadow: 0 0 0 3px var(--color-gold), var(--shadow-panel);
-}
-
-.stock-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.stock-name {
-  font-family: var(--font-display);
-  color: var(--color-lapis-deep);
-}
-
-.stock-badge {
-  width: 1.5rem;
-  height: 1.5rem;
-  flex: none;
-}
-
-.stock-tag,
-.stock-turn {
-  padding: 0 var(--space-2);
-  font-size: 0.8rem;
-  font-weight: 700;
-  border-radius: 999px;
-}
-
-.stock-tag {
-  color: var(--color-lapis-deep);
-  border: 1px solid var(--color-lapis);
-}
-
-.stock-turn {
-  margin-left: auto;
-  color: var(--color-lapis-deep);
-  background: var(--color-gold);
-}
-
-.stock .stones {
-  gap: var(--space-1);
-}
-
-.stock .stone {
-  width: 2.75rem;
-  height: 2.75rem;
-}
-
-.stock-score {
-  height: 0.5rem;
-  overflow: hidden;
-  background: var(--color-sand-deep);
-  border: 1px solid var(--color-gold-deep);
-  border-radius: 999px;
-}
-
-.stock-score-fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-gold), var(--color-carnelian));
-  transition: width var(--duration-normal) var(--ease-out);
-}
-
-.stock-counts {
-  display: flex;
-  gap: var(--space-4);
-  margin: 0;
-}
-
-.stock-counts div {
-  display: grid;
-}
-
-.stock-counts dt {
-  font-size: 0.75rem;
-  color: var(--color-muted);
-}
-
-.stock-counts dd {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.stock-action {
-  margin: 0;
-  font-weight: 600;
-  color: var(--color-muted);
-}
-
-.stock[data-active] .stock-action {
-  color: var(--color-lapis-deep);
-}
-
-/* Buttons: carved tablets with a gold rim; the primary action is lapis. */
+/* ---------- Buttons: hex-ended cartouches ---------- */
 .control {
   min-height: 2.75rem;
   padding: var(--space-2) var(--space-6);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, #fff3cf, var(--color-sand));
-  box-shadow: 0 3px 0 var(--color-gold-deep), inset 0 0 0 1px rgb(255 255 255 / 0.5);
-  color: var(--color-fg);
+  border: 0;
+  background: rgb(226 176 74 / 0.18);
+  /* Outline look: gold rim comes from the inset shadow-free gradient border below. */
+  clip-path: polygon(0.8rem 0, calc(100% - 0.8rem) 0, 100% 50%, calc(100% - 0.8rem) 100%, 0.8rem 100%, 0 50%);
+  color: var(--gold);
   font: inherit;
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+  transition: filter var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
 .control:hover:not(:disabled) {
-  transform: translateY(-1px);
+  filter: brightness(1.25);
 }
 
 .control:active:not(:disabled) {
   transform: translateY(2px);
-  box-shadow: 0 1px 0 var(--color-gold-deep);
 }
 
 .control:disabled {
-  opacity: 0.55;
   cursor: not-allowed;
-  filter: grayscale(0.6);
-  box-shadow: none;
+  background: rgb(205 189 152 / 0.2);
+  color: var(--shell-dim);
+  opacity: 0.7;
 }
 
 .control-primary {
-  background: linear-gradient(180deg, var(--color-lapis), var(--color-lapis-deep));
-  border-color: var(--color-gold);
-  box-shadow: 0 3px 0 #000, inset 0 0 0 1px rgb(217 164 65 / 0.5);
-  color: var(--color-shell);
+  background: linear-gradient(180deg, #f3cb6a, #b98424);
+  color: var(--bitumen);
 }
 
+.control-primary:disabled {
+  background: linear-gradient(180deg, #5a5547, #3c392f);
+  color: var(--shell-dim);
+}
+
+/* The Roll button glows while it is the active action. */
 .control-primary:not(:disabled) {
   animation: roll-ready 1.6s ease-in-out infinite;
 }
 
 @keyframes roll-ready {
-  50% { box-shadow: 0 3px 0 #000, 0 0 0 4px rgb(217 164 65 / 0.55); }
+  50% {
+    filter: drop-shadow(0 0 0.6rem rgb(255 154 60 / 0.85));
+  }
 }
 
-/* Compact dice tray inside the HUD. */
-.hud-dice .dice-tray {
-  flex-wrap: nowrap;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
+/* Top bar controls on the play screen */
+.controls {
+  grid-area: bar;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
 }
 
-.hud-dice .dice-bed {
-  padding: var(--space-2) var(--space-3);
+.controls .control {
+  padding-block: 0;
+  min-height: 2.75rem;
+  padding-inline: var(--space-4);
+  font-size: 0.8rem;
 }
 
-.hud-dice .die {
-  width: 2rem;
-  height: 2rem;
+.controls .link {
+  font-size: 0.85rem;
 }
 
-.hud-dice .dice-info {
-  flex: 1 1 auto;
+/* ---------- Play screen layout: one screen, no scrolling ---------- */
+.page-play {
+  position: relative;
+  max-width: none;
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-2);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.page-play h1 {
+  position: absolute;
+  top: 0.5rem;
+  left: var(--space-4);
+  z-index: 1;
+  margin: 0;
+  padding: 0.25rem 0.9rem;
+  border: 1px solid var(--gold-line);
+  border-radius: 99px;
+  background: rgb(18 13 9 / 0.55);
+  color: var(--shell-dim);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.page-play .game {
+  grid-template-areas:
+    "bar"
+    "top"
+    "two"
+    "board"
+    "dock";
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.game > * {
   min-width: 0;
 }
 
-.hud-dice .roll-result {
-  font-size: 1.25rem;
+.hud-panel-two {
+  grid-area: two;
 }
 
-.hud-dice .dice-button {
-  margin-top: var(--space-1);
-  align-self: stretch;
+.board {
+  grid-area: board;
 }
 
-/* Tablet and phone: board first, then dice, then the two panels side by side. */
+/* The player's own panel and the dice tray share the bottom dock. */
+.hud-panel-one {
+  grid-area: dock;
+}
+
+.hud-dice {
+  grid-area: dock;
+  justify-self: end;
+}
+
+/* Desktop: panel one and the dice tray sit side by side in the dock. */
+@media (min-width: 56.01rem) {
+  .page-play .game {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "bar bar"
+      "top top"
+      "two two"
+      "board board"
+      "one dice";
+    max-width: 52rem;
+  }
+
+  .hud-panel-one {
+    grid-area: one;
+    width: 100%;
+  }
+
+  .hud-dice {
+    grid-area: dice;
+  }
+
+  .board {
+    justify-self: center;
+    grid-column: 1 / -1;
+  }
+
+  .hud-panel-two {
+    grid-column: 1 / -1;
+  }
+
+  .page-play .stock {
+    height: 100%;
+  }
+
+  /* The dock panel is narrower than the opponent strip, so its stones get their own row. */
+  .hud-panel-one .stock {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "head counts"
+      "action counts"
+      "stones stones"
+      "score score";
+  }
+
+  .hud-panel-one .stones {
+    justify-content: flex-start;
+  }
+}
+
+/* Tablet and phone: vertical board between two compact panels, dice and roll below. */
 @media (max-width: 56rem) {
   .page-play {
-    padding: var(--space-3);
+    padding-inline: var(--space-2);
   }
 
   .page-play .game {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "top top"
-      "board board"
-      "dice dice"
-      "one two"
-      "controls controls";
+      "bar"
+      "top"
+      "two"
+      "board"
+      "dice"
+      "one";
+    gap: var(--space-1);
   }
-}
 
-@media (max-width: 30rem) {
-  .page-play .game {
-    gap: var(--space-2);
+  .hud-panel-one {
+    grid-area: one;
+  }
+
+  .hud-dice {
+    grid-area: dice;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .hud-top {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .hud-status {
+    font-size: 0.8rem;
+    line-height: 1.25;
   }
 
   .turn-indicator {
-    font-size: 1.05rem;
+    font-size: 0.8rem;
+    padding: 0.2rem 1rem;
   }
 
-  .hud-dice .dice-tray {
-    flex-wrap: wrap;
+  .page-play h1 {
+    top: 0.65rem;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.6rem;
   }
 
-  .hud-dice .dice-bed {
-    padding: var(--space-1) var(--space-2);
-  }
-
-  .hud-dice .die {
-    width: 1.75rem;
-    height: 1.75rem;
+  .controls {
+    padding-left: 7.5rem;
   }
 
   .stock {
-    padding: var(--space-2);
-  }
-
-  .stock .stone {
-    width: 2.25rem;
-    height: 2.25rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "head counts"
+      "action counts"
+      "stones stones"
+      "score score";
+    padding: var(--space-1) var(--space-3);
   }
 
   .stock-counts {
     gap: var(--space-2);
   }
 
-  .stock-turn {
-    margin-left: 0;
+  .stones {
+    justify-content: flex-start;
+  }
+
+  .stone {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .dice-tray {
+    padding: var(--space-1) var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .die {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+
+  .stock-action {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .stock-score {
+    display: none;
+  }
+
+  /* Vertical board: swap rows and columns so the lanes run top to bottom. */
+  .board {
+    --cell: clamp(2.3rem, calc((100dvh - 28rem) / 8), 3.4rem);
+    width: auto;
+    grid-template-columns: repeat(3, var(--cell));
+    grid-template-rows: repeat(8, var(--cell));
+    padding: 1rem 1.2rem;
+    gap: 0.25rem;
+    background:
+      radial-gradient(circle, var(--gold) 0 2px, transparent 3px) 0.4rem 0.6rem / 0.8rem 1.4rem repeat-y,
+      radial-gradient(circle, var(--gold) 0 2px, transparent 3px) calc(100% - 0.4rem) 0.6rem / 0.8rem 1.4rem repeat-y,
+      linear-gradient(135deg, #2b1e13, #0f0a06);
+  }
+
+  .cell {
+    grid-row: calc(var(--c) + 1);
+    grid-column: calc(var(--r) + 1);
+  }
+
+  .piece[style*="--slide-x"] {
+    animation-name: piece-slide-vertical;
   }
 }
 
+/* ---------- Reduced motion: no pulsing, sliding or popping; state is shown statically ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .control-primary:not(:disabled),
-  .stock,
-  .stock-score-fill,
-  .control {
-    animation: none !important;
-    transition: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* The last move stays marked with a static ring instead of an animation. */
+  .cell-rosette-land {
+    box-shadow: 0 0 0 var(--space-1) var(--gold);
+  }
+
+  .cell-capture {
+    box-shadow: 0 0 0 var(--space-1) var(--carnelian);
+  }
+
+  .piece-movable {
+    box-shadow: 0 0 0 3px var(--bitumen), 0 0 0 6px var(--ember);
   }
 
   .control-primary:not(:disabled) {
-    box-shadow: 0 3px 0 #000, 0 0 0 3px var(--color-gold);
+    outline: 2px solid var(--ember);
+    outline-offset: 2px;
   }
 }

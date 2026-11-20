@@ -39,3 +39,6 @@ _None yet._
 ## Lessons learned (phase 1, 2026-11-20)
 <!-- phase-1-retro -->
 - Two of the tester's change requests came from CSS class reuse and visible state leaking (shared `.roll-result` broke the dice layout; the status line revealed the roll early). Check shared class side effects and animation-gated state before handing off.
+
+<!-- run:cmwp8m82u00188otkyh2z13l9 -->
+- 2026-11-20 (#32): #32: app/globals.css was rewritten around the art-direction tokens (--bitumen, --gold, --ember ...). The phone board is transposed in CSS with --r/--c cell vars; the turn banner is text-transform uppercase, so e2e must match its innerText case-insensitively.
