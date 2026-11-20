@@ -245,3 +245,12 @@ h1 {
 .roll-result {
   font-weight: 600;
 }
+
+/* Rules page */
+.rules h2 {
+  margin-top: var(--space-6);
+}
+
+.rules li + li {
+  margin-top: var(--space-2);
+}

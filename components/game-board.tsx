@@ -134,6 +134,9 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         <Link href="/" className="link">
           Back to home
         </Link>
+        <a href="/rules" className="link" target="_blank" rel="noopener noreferrer">
+          How to play (opens in a new tab)
+        </a>
       </div>
     </section>
   );
