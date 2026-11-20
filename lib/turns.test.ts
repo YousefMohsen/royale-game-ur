@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cellFor, isVoidCell } from "./board";
 import { createGame, type GameState } from "./game";
-import { moveTurn, pendingMoves, rollTurn } from "./turns";
+import { describeMove, moveTurn, pendingMoves, rollTurn } from "./turns";
 
 const pad = (p: number[]) => [...p, ...Array(7 - p.length).fill(0)];
 const low = () => 0.1; // roll 4
@@ -89,5 +89,22 @@ describe("rosette cells", () => {
         const c = cellFor(p, i)!;
         expect(isRosetteCell(c.row, c.col)).toBe(isRosette(i));
       }
+  });
+});
+
+describe("describeMove", () => {
+  const base = createGame();
+  const at = (one: number[], two: number[]): GameState => ({ ...base, pieces: { one: pad(one), two: pad(two) } });
+
+  it("returns undefined when nothing moved", () => {
+    expect(describeMove(base, base)).toBeUndefined();
+  });
+
+  it("reports the moved piece", () => {
+    expect(describeMove(at([5], []), at([7], []))).toEqual({ player: "one", position: 7, captured: false });
+  });
+
+  it("flags a capture", () => {
+    expect(describeMove(at([6], [8]), at([8], []))).toEqual({ player: "one", position: 8, captured: true });
   });
 });

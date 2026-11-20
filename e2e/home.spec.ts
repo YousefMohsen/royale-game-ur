@@ -59,3 +59,12 @@ test("rules open in a new tab and keep the game unchanged", async ({ page, conte
   await rules.close();
   await expect(page.getByTestId("game-status")).toHaveText(status);
 });
+
+test("game fits a narrow screen without horizontal scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto("/");
+  await page.getByRole("link", { name: /Human vs Human/ }).click();
+  await expect(page.getByTestId("game-status")).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+  expect(overflow).toBe(false);
+});
