@@ -370,59 +370,6 @@ h1 {
   transform: scale(1.1);
 }
 
-.stocks,
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.stock {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3);
-  background: #fff8e6;
-  border: 2px solid var(--color-gold-deep);
-  border-left-width: 0.5rem;
-  border-radius: var(--radius-md);
-  box-shadow: 0 2px 0 var(--color-gold-deep);
-}
-
-.stock[data-testid="stock-one"] {
-  border-left-color: var(--color-piece-one);
-}
-
-.stock[data-testid="stock-two"] {
-  border-left-color: var(--color-piece-two);
-}
-
-.control {
-  min-height: 2.75rem;
-  padding: var(--space-2) var(--space-4);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-sm);
-  background: #fff8e6;
-  box-shadow: 0 2px 0 var(--color-gold-deep);
-  color: var(--color-fg);
-  font: inherit;
-  cursor: pointer;
-}
-
-.control:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.control-primary {
-  background: linear-gradient(180deg, var(--color-lapis), var(--color-lapis-deep));
-  border-color: var(--color-lapis-deep);
-  box-shadow: 0 2px 0 #000;
-  color: #fff8e6;
-  font-weight: 600;
-}
-
 /* Dice tray: a carved wooden tray holding four pyramid dice, with the roll action beside it. */
 .dice-tray {
   display: flex;
@@ -708,59 +655,6 @@ h1 {
   transform: scale(1.1);
 }
 
-.stocks,
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.stock {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3);
-  background: #fff8e6;
-  border: 2px solid var(--color-gold-deep);
-  border-left-width: 0.5rem;
-  border-radius: var(--radius-md);
-  box-shadow: 0 2px 0 var(--color-gold-deep);
-}
-
-.stock[data-testid="stock-one"] {
-  border-left-color: var(--color-piece-one);
-}
-
-.stock[data-testid="stock-two"] {
-  border-left-color: var(--color-piece-two);
-}
-
-.control {
-  min-height: 2.75rem;
-  padding: var(--space-2) var(--space-4);
-  border: 2px solid var(--color-gold-deep);
-  border-radius: var(--radius-sm);
-  background: #fff8e6;
-  box-shadow: 0 2px 0 var(--color-gold-deep);
-  color: var(--color-fg);
-  font: inherit;
-  cursor: pointer;
-}
-
-.control:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.control-primary {
-  background: linear-gradient(180deg, var(--color-lapis), var(--color-lapis-deep));
-  border-color: var(--color-lapis-deep);
-  box-shadow: 0 2px 0 #000;
-  color: #fff8e6;
-  font-weight: 600;
-}
-
 .dice {
   display: inline-flex;
   flex-wrap: nowrap;
@@ -909,11 +803,7 @@ h1 {
     padding: var(--space-2);
   }
 
-  .stocks > .stock {
-    flex: 1 1 8rem;
-  }
-
-  .controls {
+  .stocks >   .controls {
     gap: var(--space-2) var(--space-4);
   }
 
@@ -994,5 +884,366 @@ button.stone {
   /* Low-motion roll: the result appears at once, framed by a static ring. */
   .dice-settled .die-marked {
     filter: drop-shadow(0 0 3px var(--color-gold)) drop-shadow(0 0 1px var(--color-gold));
+  }
+}
+
+/* Play HUD: one screen with player panels either side of the board, dice below it. */
+.page-play {
+  max-width: 72rem;
+  margin-block: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+}
+
+.page-play::before {
+  height: 0.5rem;
+  margin: 0 0 var(--space-2);
+}
+
+.page-play h1 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.page-play .game {
+  margin-top: var(--space-2);
+  gap: var(--space-3) var(--space-4);
+  grid-template-columns: minmax(10rem, 1fr) minmax(0, 36rem) minmax(10rem, 1fr);
+  grid-template-areas:
+    "top top top"
+    "one board two"
+    "one dice two"
+    "controls controls controls";
+  align-items: start;
+}
+
+.hud-top {
+  grid-area: top;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+
+.hud-panel-one { grid-area: one; }
+.hud-panel-two { grid-area: two; }
+.board { grid-area: board; }
+.hud-dice { grid-area: dice; }
+.page-play .controls { grid-area: controls; }
+
+.hud-panel,
+.hud-panel .stock {
+  min-width: 0;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  justify-content: center;
+}
+
+/* Turn banner: a lapis-and-gold plaque whose gem takes the active player's colour. */
+.turn-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-4);
+  font-size: 1.25rem;
+  color: var(--color-shell);
+  background: linear-gradient(180deg, var(--color-lapis), var(--color-lapis-deep));
+  border: 2px solid var(--color-gold-deep);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 var(--color-gold-deep), inset 0 0 0 2px rgb(217 164 65 / 0.4);
+}
+
+.turn-indicator::before {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-gold);
+  background: var(--color-gold);
+}
+
+.turn-indicator[data-player="one"]::before {
+  background: var(--color-piece-one);
+}
+
+.turn-indicator[data-player="two"]::before {
+  background: var(--color-piece-two);
+  border-color: var(--color-shell);
+}
+
+.turn-indicator.turn-won {
+  color: var(--color-shell);
+  background: linear-gradient(180deg, var(--color-carnelian), #7c2a1a);
+}
+
+.hud-status {
+  flex: 1 1 14rem;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-fg);
+  background: rgb(255 248 230 / 0.7);
+  border-left: 0.3rem solid var(--color-gold);
+  border-radius: var(--radius-sm);
+}
+
+/* Player panels: identity, turn marker, stones, progress and what to do next. */
+.stock {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: linear-gradient(180deg, #fff8e6, #f1dfb2);
+  border: 2px solid var(--color-gold-deep);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 0 var(--color-gold-deep);
+  transition: box-shadow var(--duration-normal) var(--ease-out), transform var(--duration-normal) var(--ease-out);
+}
+
+.stock[data-active] {
+  border-color: var(--color-lapis);
+  box-shadow: 0 0 0 3px var(--color-gold), var(--shadow-panel);
+}
+
+.stock-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stock-name {
+  font-family: var(--font-display);
+  color: var(--color-lapis-deep);
+}
+
+.stock-badge {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+}
+
+.stock-tag,
+.stock-turn {
+  padding: 0 var(--space-2);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.stock-tag {
+  color: var(--color-lapis-deep);
+  border: 1px solid var(--color-lapis);
+}
+
+.stock-turn {
+  margin-left: auto;
+  color: var(--color-lapis-deep);
+  background: var(--color-gold);
+}
+
+.stock .stones {
+  gap: var(--space-1);
+}
+
+.stock .stone {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.stock-score {
+  height: 0.5rem;
+  overflow: hidden;
+  background: var(--color-sand-deep);
+  border: 1px solid var(--color-gold-deep);
+  border-radius: 999px;
+}
+
+.stock-score-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gold), var(--color-carnelian));
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.stock-counts {
+  display: flex;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.stock-counts div {
+  display: grid;
+}
+
+.stock-counts dt {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.stock-counts dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.stock-action {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.stock[data-active] .stock-action {
+  color: var(--color-lapis-deep);
+}
+
+/* Buttons: carved tablets with a gold rim; the primary action is lapis. */
+.control {
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-6);
+  border: 2px solid var(--color-gold-deep);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #fff3cf, var(--color-sand));
+  box-shadow: 0 3px 0 var(--color-gold-deep), inset 0 0 0 1px rgb(255 255 255 / 0.5);
+  color: var(--color-fg);
+  font: inherit;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.control:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.control:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--color-gold-deep);
+}
+
+.control:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  box-shadow: none;
+}
+
+.control-primary {
+  background: linear-gradient(180deg, var(--color-lapis), var(--color-lapis-deep));
+  border-color: var(--color-gold);
+  box-shadow: 0 3px 0 #000, inset 0 0 0 1px rgb(217 164 65 / 0.5);
+  color: var(--color-shell);
+}
+
+.control-primary:not(:disabled) {
+  animation: roll-ready 1.6s ease-in-out infinite;
+}
+
+@keyframes roll-ready {
+  50% { box-shadow: 0 3px 0 #000, 0 0 0 4px rgb(217 164 65 / 0.55); }
+}
+
+/* Compact dice tray inside the HUD. */
+.hud-dice .dice-tray {
+  flex-wrap: nowrap;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+}
+
+.hud-dice .dice-bed {
+  padding: var(--space-2) var(--space-3);
+}
+
+.hud-dice .die {
+  width: 2rem;
+  height: 2rem;
+}
+
+.hud-dice .dice-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.hud-dice .roll-result {
+  font-size: 1.25rem;
+}
+
+.hud-dice .dice-button {
+  margin-top: var(--space-1);
+  align-self: stretch;
+}
+
+/* Tablet and phone: board first, then dice, then the two panels side by side. */
+@media (max-width: 56rem) {
+  .page-play {
+    padding: var(--space-3);
+  }
+
+  .page-play .game {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "top top"
+      "board board"
+      "dice dice"
+      "one two"
+      "controls controls";
+  }
+}
+
+@media (max-width: 30rem) {
+  .page-play .game {
+    gap: var(--space-2);
+  }
+
+  .turn-indicator {
+    font-size: 1.05rem;
+  }
+
+  .hud-dice .dice-tray {
+    flex-wrap: wrap;
+  }
+
+  .hud-dice .dice-bed {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .hud-dice .die {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .stock {
+    padding: var(--space-2);
+  }
+
+  .stock .stone {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .stock-counts {
+    gap: var(--space-2);
+  }
+
+  .stock-turn {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control-primary:not(:disabled),
+  .stock,
+  .stock-score-fill,
+  .control {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .control-primary:not(:disabled) {
+    box-shadow: 0 3px 0 #000, 0 0 0 3px var(--color-gold);
   }
 }
