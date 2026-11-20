@@ -17,3 +17,6 @@ _None yet._
 
 <!-- run:cmwo8wgvk009m8onny1c46899 -->
 - 2026-11-20 (#7): Move/capture animation uses describeMove (lib/turns.ts) diffing before/after states; motion tokens and the reduced-motion override live in app/globals.css.
+
+<!-- run:cmwo9602800b88onn997pnblj -->
+- 2026-11-20 (#8): E2E dice: stub Math.random only for callers whose stack includes rollDice (a constant Math.random breaks Next dev hydration); use a seeded PRNG for full-game tests. Set PLAYWRIGHT_BROWSERS_PATH if /ms-playwright is read-only.
