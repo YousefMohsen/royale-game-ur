@@ -36,6 +36,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   const [message, setMessage] = useState(`New game started. ${playerName("one")} rolls first.`);
   const [lastRoll, setLastRoll] = useState<RollDisplay | undefined>();
   const [rolling, setRolling] = useState(false);
+  const [settledMessage, setSettledMessage] = useState("");
   const [effect, setEffect] = useState<MoveEffect | undefined>();
 
   const won = state.status.kind === "won";
@@ -48,7 +49,12 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   function showRoll(resultMessage: string, player: Player) {
     const value = Number(/rolled (\d)/.exec(resultMessage)?.[1]);
     setLastRoll((prev) => ({ value, player, id: (prev?.id ?? 0) + 1 }));
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMessage(resultMessage);
+      return;
+    }
+    setMessage("Rolling…");
+    setSettledMessage(resultMessage);
     setRolling(true);
   }
 
@@ -58,8 +64,8 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
     const timer = setTimeout(() => {
       if (state.status.kind === "awaiting-roll") {
         const result = rollTurn(state);
-        setMessage(result.message);
-        if (!result.rejected) {
+        if (result.rejected) setMessage(result.message);
+        else {
           setState(result.state);
           showRoll(result.message, state.turn);
         }
@@ -80,17 +86,22 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
 
   function roll() {
     const result = rollTurn(state);
-    setMessage(result.message);
-    if (result.rejected) return;
+    if (result.rejected) {
+      setMessage(result.message);
+      return;
+    }
     setState(result.state);
     showRoll(result.message, state.turn);
   }
 
   useEffect(() => {
     if (!rolling) return;
-    const timer = setTimeout(() => setRolling(false), ROLL_MS);
+    const timer = setTimeout(() => {
+      setRolling(false);
+      setMessage(settledMessage);
+    }, ROLL_MS);
     return () => clearTimeout(timer);
-  }, [rolling]);
+  }, [rolling, settledMessage]);
 
   function move(piece: number) {
     const result = moveTurn(state, piece);
