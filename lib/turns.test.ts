@@ -122,7 +122,7 @@ describe("moveTurn feedback", () => {
   const base = createGame();
   it("announces captures and scoring", () => {
     const pad7 = (p: number[]) => [...p, ...Array(7 - p.length).fill(0)];
-    const capture: GameState = { ...base, status: { kind: "awaiting-move", roll: 2 }, pieces: { one: pad7([6]), two: pad7([8]) } };
+    const capture: GameState = { ...base, status: { kind: "awaiting-move", roll: 1 }, pieces: { one: pad7([6]), two: pad7([7]) } };
     expect(moveTurn(capture, 0).message).toContain("Captured");
     const score: GameState = { ...base, status: { kind: "awaiting-move", roll: 2 }, pieces: { one: pad7([13]), two: pad7([]) } };
     expect(moveTurn(score, 0).message).toContain("scored");
