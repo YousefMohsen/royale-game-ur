@@ -12,6 +12,17 @@ const PLAYERS: readonly Player[] = ["one", "two"];
 /** Pause before each computer action so players can follow what happened. */
 const COMPUTER_DELAY_MS = 800;
 
+/** Which lane a row belongs to; the middle row is the shared war lane. */
+const LANES = ["one", "shared", "two"] as const;
+
+/** Path cues painted on the board: where a stone enters (position 1) and where it leaves (position 14). */
+function cueFor(row: number, col: number): "enter" | "exit" | undefined {
+  if (row === 1) return undefined;
+  if (col === 3) return "enter";
+  if (col === 6) return "exit";
+  return undefined;
+}
+
 /** Offset (in cells) a piece slides from; the CSS animation moves it to its own square. */
 function slideStyle(slide: { dx: number; dy: number } | undefined): CSSProperties | undefined {
   return slide ? ({ "--slide-x": slide.dx, "--slide-y": slide.dy } as CSSProperties) : undefined;
@@ -113,7 +124,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
       }
       const movablePiece = owner === state.turn ? movableFrom.get(position) : undefined;
       cells.push(
-        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}${owner && arrived && effect?.rosette ? " cell-rosette-land" : ""}`} data-rosette={isRosetteCell(row, col) || undefined}>
+        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}${owner && arrived && effect?.rosette ? " cell-rosette-land" : ""}`} data-rosette={isRosetteCell(row, col) || undefined} data-lane={LANES[row]} data-pattern={(row + col) % 3} data-cue={cueFor(row, col)}>
           {owner &&
             (movablePiece !== undefined ? (
               <button
