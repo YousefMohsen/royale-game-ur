@@ -38,3 +38,24 @@ test("board shows a roll result and can be restarted", async ({ page }) => {
   await page.getByRole("button", { name: "Restart" }).click();
   await expect(page.getByTestId("game-status")).toContainText("New game started");
 });
+
+test("rules page has a logical heading structure", async ({ page }) => {
+  await page.goto("/rules");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  for (const name of ["Objective", "Rolling", "Moving", "Captures", "Rosettes and safe squares", "Passing", "Winning"]) {
+    await expect(page.getByRole("heading", { level: 2, name })).toBeVisible();
+  }
+});
+
+test("rules open in a new tab and keep the game unchanged", async ({ page, context }) => {
+  await page.goto("/play?mode=human");
+  await page.getByRole("button", { name: "Roll dice" }).click();
+  const status = await page.getByTestId("game-status").innerText();
+  const [rules] = await Promise.all([
+    context.waitForEvent("page"),
+    page.getByRole("link", { name: /How to play/ }).click(),
+  ]);
+  await expect(rules.getByRole("heading", { level: 1, name: "How to play" })).toBeVisible();
+  await rules.close();
+  await expect(page.getByTestId("game-status")).toHaveText(status);
+});
