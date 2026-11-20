@@ -23,3 +23,6 @@ _None yet._
 
 <!-- run:cmwo9j08o00dh8onnsszviy51 -->
 - 2026-11-20 (#17): - 2026-11-20 (#17): Theme is a single parchment/lapis palette in app/globals.css (dark-mode overrides removed); rosettes/pieces/dice are pure CSS gradients, no image assets.
+
+<!-- run:cmwoah72100j78onnjow15fey -->
+- 2026-11-20 (#21): Move feedback (#21): MoveEffect in lib/turns.ts now carries from/rosette/scored; the board slides pieces via --slide-x/--slide-y CSS vars, and the reduced-motion block at the end of app/globals.css replaces animations with static rings.
