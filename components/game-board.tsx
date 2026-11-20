@@ -130,7 +130,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   for (let row = 0; row < BOARD_ROWS; row++) {
     for (let col = 0; col < BOARD_COLS; col++) {
       if (isVoidCell(row, col)) {
-        cells.push(<div key={`${row}-${col}`} className="cell cell-void" aria-hidden="true" />);
+        cells.push(<div key={`${row}-${col}`} className="cell cell-void" style={{ "--r": row, "--c": col } as CSSProperties} aria-hidden="true" />);
         continue;
       }
       const owner = PLAYERS.find((p) =>
@@ -158,7 +158,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
       }
       const movablePiece = owner === state.turn ? movableFrom.get(position) : undefined;
       cells.push(
-        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}${owner && arrived && effect?.rosette ? " cell-rosette-land" : ""}`} data-rosette={isRosetteCell(row, col) || undefined} data-lane={LANES[row]} data-pattern={(row + col) % 3} data-cue={cueFor(row, col)}>
+        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}${owner && arrived && effect?.rosette ? " cell-rosette-land" : ""}`} data-rosette={isRosetteCell(row, col) || undefined} data-lane={LANES[row]} data-pattern={(row + col) % 3} data-cue={cueFor(row, col)} style={{ "--r": row, "--c": col } as CSSProperties}>
           {owner &&
             (movablePiece !== undefined ? (
               <button
@@ -214,7 +214,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
           <span className={`piece piece-${p} stock-badge`} aria-hidden="true" />
           <strong className="stock-name">{playerName(p)}</strong>
           {mode === "computer" && p === "two" && <span className="stock-tag">Computer</span>}
-          {active && <span className="stock-turn">Your turn</span>}
+          {active && <span className="stock-turn">{mode === "computer" && p === "two" ? "Its turn" : "Your turn"}</span>}
         </div>
         <div className="stones" role="group" aria-label={`${playerName(p)} stones: ${waiting} in reserve, ${onBoard} on the board, ${done} finished`}>
           {stones.map((kind, i) => {
@@ -286,10 +286,10 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
           {won ? "Play again" : "Restart"}
         </button>
         <Link href="/" className="link">
-          Back to home
+          <span className="sr-only">Back to </span>Home
         </Link>
         <a href="/rules" className="link" target="_blank" rel="noopener noreferrer">
-          How to play (opens in a new tab)
+          How to play<span className="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
     </section>

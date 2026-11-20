@@ -90,7 +90,7 @@ test("a full game ends with a winner and can be restarted", async ({ page }) => 
   await page.goto("/play?mode=human");
   const turn = page.getByTestId("current-player");
   for (let step = 0; step < 1500; step++) {
-    if (/wins/.test(await turn.innerText())) break;
+    if (/wins/i.test(await turn.innerText())) break;
     if (await rollButton(page).isEnabled()) {
       await rollButton(page).click();
     } else {
