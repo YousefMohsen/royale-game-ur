@@ -20,3 +20,6 @@ _None yet._
 
 <!-- run:cmwo9602800b88onn997pnblj -->
 - 2026-11-20 (#8): E2E dice: stub Math.random only for callers whose stack includes rollDice (a constant Math.random breaks Next dev hydration); use a seeded PRNG for full-game tests. Set PLAYWRIGHT_BROWSERS_PATH if /ms-playwright is read-only.
+
+<!-- run:cmwo9j08o00dh8onnsszviy51 -->
+- 2026-11-20 (#17): - 2026-11-20 (#17): Theme is a single parchment/lapis palette in app/globals.css (dark-mode overrides removed); rosettes/pieces/dice are pure CSS gradients, no image assets.
