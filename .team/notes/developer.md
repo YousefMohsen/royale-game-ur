@@ -35,3 +35,7 @@ _None yet._
 
 <!-- run:cmwocen2t00ta8onn6nyva7ih -->
 - 2026-11-20 (#27): HUD (#27): layout is CSS grid areas in the 'Play HUD' section at the end of app/globals.css (.page-play .game); panels are renderPanel() in components/game-board.tsx; e2e reads stock counts with regexes like /Waiting\s*6/. Run pnpm install --frozen-lockfile --store-dir /tmp/pnpm-store first in a fresh container.
+
+## Lessons learned (phase 1, 2026-11-20)
+<!-- phase-1-retro -->
+- Two of the tester's change requests came from CSS class reuse and visible state leaking (shared `.roll-result` broke the dice layout; the status line revealed the roll early). Check shared class side effects and animation-gated state before handing off.
