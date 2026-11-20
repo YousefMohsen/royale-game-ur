@@ -1,23 +1,49 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { chooseMove } from "@/lib/ai";
 import { BOARD_COLS, BOARD_ROWS, cellFor, isRosetteCell, isVoidCell } from "@/lib/board";
 import { FINISH, START, type Player } from "@/lib/game";
 import { newLocalGame, type GameMode } from "@/lib/modes";
 import { moveTurn, pendingMoves, playerName, rollTurn } from "@/lib/turns";
 
 const PLAYERS: readonly Player[] = ["one", "two"];
+/** Pause before each computer action so players can follow what happened. */
+const COMPUTER_DELAY_MS = 800;
 
 export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   const [state, setState] = useState(() => newLocalGame(mode).state);
   const [message, setMessage] = useState(`New game started. ${playerName("one")} rolls first.`);
   const [lastRoll, setLastRoll] = useState<number | undefined>();
 
-  const moves = pendingMoves(state);
   const won = state.status.kind === "won";
-  const canRoll = state.status.kind === "awaiting-roll";
+  const computerTurn = mode === "computer" && !won && state.turn === "two";
+  const moves = computerTurn ? [] : pendingMoves(state);
+  const canRoll = state.status.kind === "awaiting-roll" && !computerTurn;
   const movableFrom = new Map(moves.map((m) => [m.from, m.piece]));
+
+  // The computer rolls and moves on its own, one action per delay; restarting or leaving cancels the timer.
+  useEffect(() => {
+    if (!computerTurn) return;
+    const timer = setTimeout(() => {
+      if (state.status.kind === "awaiting-roll") {
+        const result = rollTurn(state);
+        setMessage(result.message);
+        if (!result.rejected) {
+          setState(result.state);
+          setLastRoll(Number(/rolled (\d)/.exec(result.message)?.[1]));
+        }
+      } else {
+        const choice = chooseMove(state);
+        if (!choice) return;
+        const result = moveTurn(state, choice.piece);
+        setMessage(`Computer moved a piece. ${result.message}`);
+        if (!result.rejected) setState(result.state);
+      }
+    }, COMPUTER_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [computerTurn, state]);
 
   function roll() {
     const result = rollTurn(state);
@@ -87,7 +113,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         {won && state.status.kind === "won"
           ? `${playerName(state.status.winner)} wins`
           : `${playerName(state.turn)}'s turn`}
-        {mode === "computer" && !won && state.turn === "two" ? " (computer moves arrive in a later update)" : ""}
+        {mode === "computer" && !won && state.turn === "two" ? " (computer)" : ""}
       </p>
       <p className="muted" role="status" data-testid="game-status">
         {message}
