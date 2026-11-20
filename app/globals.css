@@ -141,6 +141,7 @@ h1 {
 }
 
 .game {
+  min-width: 0;
   display: grid;
   gap: var(--space-4);
   margin-top: var(--space-4);
@@ -181,7 +182,14 @@ h1 {
   border-radius: 50%;
   border: 2px solid var(--color-fg);
   padding: 0;
-  animation: fade-in var(--duration-normal) var(--ease-out) both;
+}
+
+.piece-arrived {
+  animation: piece-arrive var(--duration-normal) var(--ease-out) both;
+}
+
+.cell-capture {
+  animation: capture-flash var(--duration-normal) var(--ease-out) both;
 }
 
 .piece-one {
@@ -221,6 +229,7 @@ h1 {
 }
 
 .control {
+  min-height: 2.75rem;
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
@@ -244,6 +253,69 @@ h1 {
 
 .roll-result {
   font-weight: 600;
+  display: inline-block;
+  animation: roll-pop var(--duration-normal) var(--ease-out) both;
+}
+
+.turn-indicator {
+  animation: fade-in var(--duration-normal) var(--ease-out) both;
+}
+
+.turn-won {
+  color: var(--color-accent);
+  animation: roll-pop var(--duration-normal) var(--ease-out) both;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+@keyframes piece-arrive {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@keyframes capture-flash {
+  from {
+    box-shadow: 0 0 0 var(--space-2) var(--color-accent);
+  }
+}
+
+@keyframes roll-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+@media (max-width: 30rem) {
+  .board {
+    gap: 2px;
+  }
+
+  .cell {
+    border-radius: 2px;
+  }
+
+  .page {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .stocks > .stock {
+    flex: 1 1 8rem;
+  }
+
+  .controls {
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .control-primary {
+    flex: 1 1 100%;
+  }
 }
 
 /* Rules page */

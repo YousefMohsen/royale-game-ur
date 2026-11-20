@@ -14,3 +14,6 @@ _None yet._
 
 <!-- run:cmwo8mqvw00888onn6j3ny4lg -->
 - 2026-11-20 (#6): Computer AI lives in lib/ai.ts (chooseMove/scoreMove, pure); game-board.tsx drives it via a useEffect timer (COMPUTER_DELAY_MS).
+
+<!-- run:cmwo8wgvk009m8onny1c46899 -->
+- 2026-11-20 (#7): Move/capture animation uses describeMove (lib/turns.ts) diffing before/after states; motion tokens and the reduced-motion override live in app/globals.css.

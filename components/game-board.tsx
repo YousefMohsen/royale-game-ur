@@ -6,7 +6,7 @@ import { chooseMove } from "@/lib/ai";
 import { BOARD_COLS, BOARD_ROWS, cellFor, isRosetteCell, isVoidCell } from "@/lib/board";
 import { FINISH, START, type Player } from "@/lib/game";
 import { newLocalGame, type GameMode } from "@/lib/modes";
-import { moveTurn, pendingMoves, playerName, rollTurn } from "@/lib/turns";
+import { describeMove, moveTurn, pendingMoves, playerName, rollTurn, type MoveEffect } from "@/lib/turns";
 
 const PLAYERS: readonly Player[] = ["one", "two"];
 /** Pause before each computer action so players can follow what happened. */
@@ -16,6 +16,8 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   const [state, setState] = useState(() => newLocalGame(mode).state);
   const [message, setMessage] = useState(`New game started. ${playerName("one")} rolls first.`);
   const [lastRoll, setLastRoll] = useState<number | undefined>();
+  const [rollCount, setRollCount] = useState(0);
+  const [effect, setEffect] = useState<MoveEffect | undefined>();
 
   const won = state.status.kind === "won";
   const computerTurn = mode === "computer" && !won && state.turn === "two";
@@ -33,13 +35,17 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         if (!result.rejected) {
           setState(result.state);
           setLastRoll(Number(/rolled (\d)/.exec(result.message)?.[1]));
+          setRollCount((n) => n + 1);
         }
       } else {
         const choice = chooseMove(state);
         if (!choice) return;
         const result = moveTurn(state, choice.piece);
         setMessage(`Computer moved a piece. ${result.message}`);
-        if (!result.rejected) setState(result.state);
+        if (!result.rejected) {
+          setEffect(describeMove(state, result.state));
+          setState(result.state);
+        }
       }
     }, COMPUTER_DELAY_MS);
     return () => clearTimeout(timer);
@@ -51,15 +57,20 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
     if (result.rejected) return;
     setState(result.state);
     setLastRoll(Number(/rolled (\d)/.exec(result.message)?.[1]));
+    setRollCount((n) => n + 1);
   }
 
   function move(piece: number) {
     const result = moveTurn(state, piece);
     setMessage(result.message);
-    if (!result.rejected) setState(result.state);
+    if (result.rejected) return;
+    setEffect(describeMove(state, result.state));
+    setState(result.state);
   }
 
   function restart() {
+    setEffect(undefined);
+    setRollCount(0);
     setState(newLocalGame(mode).state);
     setLastRoll(undefined);
     setMessage(`New game started. ${playerName("one")} rolls first.`);
@@ -79,6 +90,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         }),
       );
       let position = 0;
+      let arrived = false;
       let label = "Empty square";
       if (owner) {
         const idx = state.pieces[owner].findIndex((pos) => {
@@ -87,20 +99,21 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         });
         position = state.pieces[owner][idx] ?? START;
         label = `${playerName(owner)} piece`;
+        arrived = effect?.player === owner && effect.position === position;
       }
       const movablePiece = owner === state.turn ? movableFrom.get(position) : undefined;
       cells.push(
-        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}`} data-rosette={isRosetteCell(row, col) || undefined}>
+        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}`} data-rosette={isRosetteCell(row, col) || undefined}>
           {owner &&
             (movablePiece !== undefined ? (
               <button
                 type="button"
-                className={`piece piece-${owner} piece-movable`}
+                className={`piece piece-${owner} piece-movable${arrived ? " piece-arrived" : ""}`}
                 aria-label={`${label} on square ${position}. Move ${state.status.kind === "awaiting-move" ? state.status.roll : 0} squares`}
                 onClick={() => move(movablePiece)}
               />
             ) : (
-              <span className={`piece piece-${owner}`} role="img" aria-label={label} />
+              <span className={`piece piece-${owner}${arrived ? " piece-arrived" : ""}`} role="img" aria-label={label} />
             ))}
         </div>,
       );
@@ -109,13 +122,13 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
 
   return (
     <section aria-label="Game board" className="game">
-      <p className="turn-indicator" data-testid="current-player">
+      <p key={won ? "won" : state.turn} className={`turn-indicator${won ? " turn-won" : ""}`} data-testid="current-player">
         {won && state.status.kind === "won"
           ? `${playerName(state.status.winner)} wins`
           : `${playerName(state.turn)}'s turn`}
         {mode === "computer" && !won && state.turn === "two" ? " (computer)" : ""}
       </p>
-      <p className="muted" role="status" data-testid="game-status">
+      <p className="muted" role="status" aria-live="polite" aria-atomic="true" data-testid="game-status">
         {message}
       </p>
 
@@ -150,7 +163,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
           </button>
         )}
         {lastRoll !== undefined && !won && (
-          <span className="roll-result" data-testid="roll-result">
+          <span key={rollCount} className="roll-result" data-testid="roll-result">
             Roll: {lastRoll}
           </span>
         )}

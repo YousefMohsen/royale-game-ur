@@ -53,3 +53,28 @@ export function moveTurn(state: GameState, pieceIndex: number): TurnResult {
     return { state, message: "That move isn't allowed. Pick a highlighted piece.", rejected: true };
   }
 }
+
+export interface MoveEffect {
+  player: Player;
+  /** Track position the moved piece now stands on. */
+  position: number;
+  /** True when the move sent an opponent piece back to the start. */
+  captured: boolean;
+}
+
+/** Finds the piece that moved between two states (and whether it captured), so the UI can animate it. */
+export function describeMove(before: GameState, after: GameState): MoveEffect | undefined {
+  for (const player of ["one", "two"] as const) {
+    const other = player === "one" ? "two" : "one";
+    const prev = before.pieces[player];
+    const idx = after.pieces[player].findIndex((pos, i) => pos !== prev[i]);
+    if (idx < 0) continue;
+    const waiting = (s: GameState) => s.pieces[other].filter((pos) => pos === 0).length;
+    return {
+      player,
+      position: after.pieces[player][idx] ?? 0,
+      captured: waiting(after) > waiting(before),
+    };
+  }
+  return undefined;
+}
