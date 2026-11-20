@@ -101,10 +101,30 @@ describe("describeMove", () => {
   });
 
   it("reports the moved piece", () => {
-    expect(describeMove(at([5], []), at([7], []))).toEqual({ player: "one", position: 7, captured: false });
+    expect(describeMove(at([5], []), at([7], []))).toEqual({ player: "one", from: 5, position: 7, rosette: false, scored: false, captured: false });
+  });
+
+  it("flags a rosette landing and scoring", () => {
+    expect(describeMove(at([2], []), at([4], []))).toMatchObject({ from: 2, rosette: true, scored: false });
+    expect(describeMove(at([13], []), at([15], []))).toMatchObject({ position: 15, rosette: false, scored: true });
+  });
+
+  it("reports entering from reserve", () => {
+    expect(describeMove(base, at([2], []))).toMatchObject({ from: 0, position: 2 });
   });
 
   it("flags a capture", () => {
-    expect(describeMove(at([6], [8]), at([8], []))).toEqual({ player: "one", position: 8, captured: true });
+    expect(describeMove(at([6], [8]), at([8], []))).toEqual({ player: "one", from: 6, position: 8, rosette: true, scored: false, captured: true });
+  });
+});
+
+describe("moveTurn feedback", () => {
+  const base = createGame();
+  it("announces captures and scoring", () => {
+    const pad7 = (p: number[]) => [...p, ...Array(7 - p.length).fill(0)];
+    const capture: GameState = { ...base, status: { kind: "awaiting-move", roll: 1 }, pieces: { one: pad7([6]), two: pad7([7]) } };
+    expect(moveTurn(capture, 0).message).toContain("Captured");
+    const score: GameState = { ...base, status: { kind: "awaiting-move", roll: 2 }, pieces: { one: pad7([13]), two: pad7([]) } };
+    expect(moveTurn(score, 0).message).toContain("scored");
   });
 });

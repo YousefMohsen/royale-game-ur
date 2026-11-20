@@ -5,6 +5,8 @@ import {
   rollDice,
   type GameState,
   type Move,
+  FINISH,
+  ROSETTES,
   type Player,
 } from "./game";
 
@@ -47,7 +49,9 @@ export function moveTurn(state: GameState, pieceIndex: number): TurnResult {
     if (next.status.kind === "won") {
       return { state: next, message: `${playerName(next.status.winner)} wins!`, rejected: false };
     }
-    const extra = next.turn === state.turn ? ` ${playerName(next.turn)} landed on a rosette and rolls again.` : ` ${playerName(next.turn)}'s turn to roll.`;
+    const fx = describeMove(state, next);
+    const note = [fx?.captured ? "Captured an opponent piece, which returns to its reserve." : "", fx?.scored ? "A piece left the board and scored." : ""].filter(Boolean).join(" ");
+    const extra = (note ? ` ${note}` : "") + (next.turn === state.turn ? ` ${playerName(next.turn)} landed on a rosette and rolls again.` : ` ${playerName(next.turn)}'s turn to roll.`);
     return { state: next, message: extra.trim(), rejected: false };
   } catch {
     return { state, message: "That move isn't allowed. Pick a highlighted piece.", rejected: true };
@@ -56,8 +60,14 @@ export function moveTurn(state: GameState, pieceIndex: number): TurnResult {
 
 export interface MoveEffect {
   player: Player;
-  /** Track position the moved piece now stands on. */
+  /** Track position the moved piece started from (0 = entered from reserve). */
+  from: number;
+  /** Track position the moved piece now stands on (FINISH when it scored). */
   position: number;
+  /** True when the piece landed on a rosette square. */
+  rosette: boolean;
+  /** True when the piece left the board and scored. */
+  scored: boolean;
   /** True when the move sent an opponent piece back to the start. */
   captured: boolean;
 }
@@ -70,9 +80,13 @@ export function describeMove(before: GameState, after: GameState): MoveEffect | 
     const idx = after.pieces[player].findIndex((pos, i) => pos !== prev[i]);
     if (idx < 0) continue;
     const waiting = (s: GameState) => s.pieces[other].filter((pos) => pos === 0).length;
+    const position = after.pieces[player][idx] ?? 0;
     return {
       player,
-      position: after.pieces[player][idx] ?? 0,
+      from: prev[idx] ?? 0,
+      position,
+      rosette: ROSETTES.includes(position),
+      scored: position === FINISH,
       captured: waiting(after) > waiting(before),
     };
   }
