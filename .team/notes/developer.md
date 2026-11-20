@@ -29,3 +29,6 @@ _None yet._
 
 <!-- run:cmwobb3mf00n28onnholcdenl -->
 - 2026-11-20 (#25): Board cells carry data-lane/data-pattern/data-cue (components/game-board.tsx); tile motifs, scene background and frieze live in app/globals.css (#25).
+
+<!-- run:cmwobxh4w00r08onnavgtwifd -->
+- 2026-11-20 (#28): Dice UI lives in components/dice-tray.tsx; game-board.tsx holds lastRoll {value,player,id} and a `rolling` flag (ROLL_MS) that locks moves/computer until the tumble ends; full-game e2e uses emulateMedia reducedMotion to skip it. Kill stray `next dev` (via /proc) before pnpm test:e2e; use PLAYWRIGHT_BROWSERS_PATH=/ms-playwright.
