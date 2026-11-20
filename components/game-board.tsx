@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
 import { chooseMove } from "@/lib/ai";
+import { DiceTray, type RollDisplay } from "@/components/dice-tray";
 import { BOARD_COLS, BOARD_ROWS, cellFor, isRosetteCell, isVoidCell } from "@/lib/board";
 import { FINISH, PIECES_PER_PLAYER, START, type Player } from "@/lib/game";
 import { newLocalGame, type GameMode } from "@/lib/modes";
@@ -11,6 +12,8 @@ import { describeMove, moveTurn, pendingMoves, playerName, rollTurn, type MoveEf
 const PLAYERS: readonly Player[] = ["one", "two"];
 /** Pause before each computer action so players can follow what happened. */
 const COMPUTER_DELAY_MS = 800;
+/** How long the dice tumble before the result is revealed; skipped for reduced motion. */
+const ROLL_MS = 700;
 
 /** Which lane a row belongs to; the middle row is the shared war lane. */
 const LANES = ["one", "shared", "two"] as const;
@@ -31,27 +34,40 @@ function slideStyle(slide: { dx: number; dy: number } | undefined): CSSPropertie
 export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   const [state, setState] = useState(() => newLocalGame(mode).state);
   const [message, setMessage] = useState(`New game started. ${playerName("one")} rolls first.`);
-  const [lastRoll, setLastRoll] = useState<number | undefined>();
-  const [rollCount, setRollCount] = useState(0);
+  const [lastRoll, setLastRoll] = useState<RollDisplay | undefined>();
+  const [rolling, setRolling] = useState(false);
+  const [settledMessage, setSettledMessage] = useState("");
   const [effect, setEffect] = useState<MoveEffect | undefined>();
 
   const won = state.status.kind === "won";
   const computerTurn = mode === "computer" && !won && state.turn === "two";
-  const moves = computerTurn ? [] : pendingMoves(state);
-  const canRoll = state.status.kind === "awaiting-roll" && !computerTurn;
+  const moves = computerTurn || rolling ? [] : pendingMoves(state);
+  const canRoll = state.status.kind === "awaiting-roll" && !computerTurn && !rolling;
   const movableFrom = new Map(moves.map((m) => [m.from, m.piece]));
+
+  /** Starts the tumble; the result stays hidden (and moves locked) until it settles. */
+  function showRoll(resultMessage: string, player: Player) {
+    const value = Number(/rolled (\d)/.exec(resultMessage)?.[1]);
+    setLastRoll((prev) => ({ value, player, id: (prev?.id ?? 0) + 1 }));
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMessage(resultMessage);
+      return;
+    }
+    setMessage("Rolling…");
+    setSettledMessage(resultMessage);
+    setRolling(true);
+  }
 
   // The computer rolls and moves on its own, one action per delay; restarting or leaving cancels the timer.
   useEffect(() => {
-    if (!computerTurn) return;
+    if (!computerTurn || rolling) return;
     const timer = setTimeout(() => {
       if (state.status.kind === "awaiting-roll") {
         const result = rollTurn(state);
-        setMessage(result.message);
-        if (!result.rejected) {
+        if (result.rejected) setMessage(result.message);
+        else {
           setState(result.state);
-          setLastRoll(Number(/rolled (\d)/.exec(result.message)?.[1]));
-          setRollCount((n) => n + 1);
+          showRoll(result.message, state.turn);
         }
       } else {
         const choice = chooseMove(state);
@@ -61,20 +77,31 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         if (!result.rejected) {
           setEffect(describeMove(state, result.state));
           setState(result.state);
+          setLastRoll(undefined);
         }
       }
     }, COMPUTER_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [computerTurn, state]);
+  }, [computerTurn, state, rolling]);
 
   function roll() {
     const result = rollTurn(state);
-    setMessage(result.message);
-    if (result.rejected) return;
+    if (result.rejected) {
+      setMessage(result.message);
+      return;
+    }
     setState(result.state);
-    setLastRoll(Number(/rolled (\d)/.exec(result.message)?.[1]));
-    setRollCount((n) => n + 1);
+    showRoll(result.message, state.turn);
   }
+
+  useEffect(() => {
+    if (!rolling) return;
+    const timer = setTimeout(() => {
+      setRolling(false);
+      setMessage(settledMessage);
+    }, ROLL_MS);
+    return () => clearTimeout(timer);
+  }, [rolling, settledMessage]);
 
   function move(piece: number) {
     const result = moveTurn(state, piece);
@@ -82,15 +109,22 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
     if (result.rejected) return;
     setEffect(describeMove(state, result.state));
     setState(result.state);
+    setLastRoll(undefined);
   }
 
   function restart() {
     setEffect(undefined);
-    setRollCount(0);
+    setRolling(false);
     setState(newLocalGame(mode).state);
     setLastRoll(undefined);
     setMessage(`New game started. ${playerName("one")} rolls first.`);
   }
+
+  let diceHint = "Press Roll dice to throw the four pyramids.";
+  if (rolling) diceHint = "The dice are tumbling…";
+  else if (lastRoll?.value === 0 && lastRoll.player !== state.turn) diceHint = `${playerName(lastRoll.player)} cannot move. The turn passed.`;
+  else if (computerTurn) diceHint = "The computer is playing.";
+  else if (state.status.kind === "awaiting-move") diceHint = moves.length ? "Choose a highlighted stone to move." : "No legal move.";
 
   const cells = [];
   for (let row = 0; row < BOARD_ROWS; row++) {
@@ -154,6 +188,17 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         {message}
       </p>
 
+      {!won && (
+        <DiceTray
+          roll={lastRoll}
+          rolling={rolling}
+          canRoll={canRoll}
+          onRoll={roll}
+          rollerName={lastRoll ? playerName(lastRoll.player) : undefined}
+          hint={diceHint}
+        />
+      )}
+
       <div className="board" role="group" aria-label="Board: 3 rows of 8 squares">
         {cells}
       </div>
@@ -210,23 +255,6 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
       </div>
 
       <div className="controls">
-        {!won && (
-          <button type="button" className="control control-primary" onClick={roll} disabled={!canRoll}>
-            Roll dice
-          </button>
-        )}
-        {lastRoll !== undefined && !won && (
-          <span key={rollCount} className="roll-result" data-testid="roll-result">
-            Roll: {lastRoll}
-          </span>
-        )}
-        {lastRoll !== undefined && !won && (
-          <span key={`dice-${rollCount}`} className="dice" aria-hidden="true">
-            {[0, 1, 2, 3].map((i) => (
-              <span key={i} className={`die${i < lastRoll ? " die-marked" : ""}`} />
-            ))}
-          </span>
-        )}
         <button type="button" className="control" onClick={restart}>
           {won ? "Play again" : "Restart"}
         </button>

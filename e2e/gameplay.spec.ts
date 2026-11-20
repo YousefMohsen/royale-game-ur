@@ -85,6 +85,7 @@ test("Human vs Computer: the computer takes its turn and the human cannot roll m
 
 test("a full game ends with a winner and can be restarted", async ({ page }) => {
   test.setTimeout(120_000);
+  await page.emulateMedia({ reducedMotion: "reduce" }); // skip the dice tumble so hundreds of rolls stay fast
   await seedDice(page, 12345);
   await page.goto("/play?mode=human");
   const turn = page.getByTestId("current-player");
@@ -103,4 +104,25 @@ test("a full game ends with a winner and can be restarted", async ({ page }) => 
   await expect(page.getByTestId("current-player")).toContainText("Player one's turn");
   await expect(page.getByTestId("stock-one")).toContainText("Finished: 0");
   await expect(rollButton(page)).toBeEnabled();
+});
+
+test("dice tray is visible before rolling and shows no stale roll", async ({ page }) => {
+  await fixDice(page, 0.1);
+  await page.goto("/play?mode=human");
+  await expect(page.getByTestId("dice-tray")).toBeInViewport();
+  await expect(page.getByTestId("roll-result")).toHaveCount(0);
+  await rollButton(page).click();
+  await expect(page.getByTestId("roll-result")).toHaveText("Roll: 4");
+  await page.getByRole("button", { name: "Enter a piece" }).click();
+  // The roll is consumed by the move, so the tray must not keep showing it.
+  await expect(page.getByTestId("roll-result")).toHaveCount(0);
+});
+
+test("reduced motion reveals the roll result immediately", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await fixDice(page, 0.1);
+  await page.goto("/play?mode=human");
+  await rollButton(page).click();
+  await expect(page.getByTestId("roll-result")).toHaveText("Roll: 4", { timeout: 300 });
+  await expect(page.getByTestId("dice-tray")).not.toHaveAttribute("data-rolling", "true");
 });
