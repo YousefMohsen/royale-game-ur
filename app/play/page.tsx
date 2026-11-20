@@ -26,7 +26,7 @@ export default async function PlayPage({
   }
 
   return (
-    <main className="page">
+    <main className="page page-play">
       <h1 className="fade-in">{modeLabels[mode]}</h1>
       <GameBoard key={mode} mode={mode} />
     </main>

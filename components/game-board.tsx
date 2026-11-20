@@ -176,86 +176,113 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
     }
   }
 
+  const status = state.status;
+  const turnLabel =
+    won && status.kind === "won"
+      ? `${playerName(status.winner)} wins`
+      : `${playerName(state.turn)}'s turn${computerTurn ? " (computer)" : ""}`;
+  const choosingMove = !won && !computerTurn && status.kind === "awaiting-move" && moves.length > 0;
+
+  /** One player's HUD panel: identity, turn marker, stones and progress. */
+  function renderPanel(p: Player) {
+    const waiting = state.pieces[p].filter((pos) => pos === START).length;
+    const done = state.pieces[p].filter((pos) => pos === FINISH).length;
+    const onBoard = PIECES_PER_PLAYER - waiting - done;
+    const active = !won && p === state.turn;
+    const enter = p === state.turn ? movableFrom.get(START) : undefined;
+    const choosing = p === state.turn && !computerTurn && status.kind === "awaiting-move";
+    const stones: ("reserve" | "board" | "done")[] = [
+      ...Array.from({ length: waiting }, () => "reserve" as const),
+      ...Array.from({ length: onBoard }, () => "board" as const),
+      ...Array.from({ length: done }, () => "done" as const),
+    ];
+    let firstReserve = true;
+    // The stone that just returned to reserve (last reserve stone) or just scored (last finished stone).
+    const returnedIdx = effect?.captured && effect.player !== p ? waiting - 1 : -1;
+    const scoredIdx = effect?.scored && effect.player === p ? stones.length - 1 : -1;
+    let action = "Waiting for their turn";
+    if (won && status.kind === "won") action = status.winner === p ? "Victory!" : "Defeated";
+    else if (active && rolling) action = "Dice tumbling…";
+    else if (active && computerTurn) action = "Thinking…";
+    else if (active && status.kind === "awaiting-roll") action = "Roll the dice";
+    else if (active && enter !== undefined) action = "Choose a stone to enter";
+    else if (active && choosingMove) action = "Choose a stone to move";
+    else if (active) action = "No legal move";
+    return (
+      <div key={p} className={`stock stock-${p}`} data-testid={`stock-${p}`} data-active={active || undefined}>
+        <div className="stock-head">
+          <span className={`piece piece-${p} stock-badge`} aria-hidden="true" />
+          <strong className="stock-name">{playerName(p)}</strong>
+          {mode === "computer" && p === "two" && <span className="stock-tag">Computer</span>}
+          {active && <span className="stock-turn">Your turn</span>}
+        </div>
+        <div className="stones" role="group" aria-label={`${playerName(p)} stones: ${waiting} in reserve, ${onBoard} on the board, ${done} finished`}>
+          {stones.map((kind, i) => {
+            const cls = `piece piece-${p} stone stone-${kind}`;
+            if (kind === "reserve" && firstReserve && enter !== undefined) {
+              firstReserve = false;
+              return <button key={i} type="button" className={`${cls} piece-movable`} aria-label="Enter a piece" onClick={() => move(enter)} />;
+            }
+            firstReserve = false;
+            const text = { reserve: "Stone in reserve", board: "Stone on the board", done: "Finished stone" }[kind];
+            const unavailable = kind === "reserve" && choosing;
+            const fx = i === returnedIdx ? " stone-returned" : i === scoredIdx ? " stone-scored" : "";
+            return (
+              <span
+                key={i}
+                className={`${cls}${unavailable ? " stone-unavailable" : ""}${fx}`}
+                role="img"
+                aria-label={unavailable ? `${text}, cannot enter with this roll` : text}
+              />
+            );
+          })}
+        </div>
+        <div className="stock-score" role="progressbar" aria-label={`${playerName(p)} progress`} aria-valuemin={0} aria-valuemax={PIECES_PER_PLAYER} aria-valuenow={done} aria-valuetext={`${done} of ${PIECES_PER_PLAYER} stones finished`}>
+          <span className="stock-score-fill" style={{ width: `${(done / PIECES_PER_PLAYER) * 100}%` }} />
+        </div>
+        <dl className="stock-counts">
+          <div><dt>Waiting</dt><dd>{waiting}</dd></div>
+          <div><dt>On board</dt><dd>{onBoard}</dd></div>
+          <div><dt>Finished</dt><dd>{done}</dd></div>
+        </dl>
+        <p className="stock-action">{action}</p>
+      </div>
+    );
+  }
+
   return (
     <section aria-label="Game board" className="game">
-      <p key={won ? "won" : state.turn} className={`turn-indicator${won ? " turn-won" : ""}`} data-testid="current-player">
-        {won && state.status.kind === "won"
-          ? `${playerName(state.status.winner)} wins`
-          : `${playerName(state.turn)}'s turn`}
-        {mode === "computer" && !won && state.turn === "two" ? " (computer)" : ""}
-      </p>
-      <p className="muted" role="status" aria-live="polite" aria-atomic="true" data-testid="game-status">
-        {message}
-      </p>
+      <div className="hud-top">
+        <p key={won ? "won" : state.turn} className={`turn-indicator${won ? " turn-won" : ""}`} data-testid="current-player" data-player={won ? undefined : state.turn}>
+          {turnLabel}
+        </p>
+        <p className="hud-status" role="status" aria-live="polite" aria-atomic="true" data-testid="game-status">
+          {message}
+        </p>
+      </div>
 
-      {!won && (
-        <DiceTray
-          roll={lastRoll}
-          rolling={rolling}
-          canRoll={canRoll}
-          onRoll={roll}
-          rollerName={lastRoll ? playerName(lastRoll.player) : undefined}
-          hint={diceHint}
-        />
-      )}
+      <div className="hud-panel hud-panel-one">{renderPanel("one")}</div>
+      <div className="hud-panel hud-panel-two">{renderPanel("two")}</div>
 
       <div className="board" role="group" aria-label="Board: 3 rows of 8 squares">
         {cells}
       </div>
 
-      <div className="stocks">
-        {PLAYERS.map((p) => {
-          const waiting = state.pieces[p].filter((pos) => pos === START).length;
-          const done = state.pieces[p].filter((pos) => pos === FINISH).length;
-          const onBoard = PIECES_PER_PLAYER - waiting - done;
-          const enter = p === state.turn ? movableFrom.get(START) : undefined;
-          const choosing = p === state.turn && !computerTurn && state.status.kind === "awaiting-move";
-          const stones: ("reserve" | "board" | "done")[] = [
-            ...Array.from({ length: waiting }, () => "reserve" as const),
-            ...Array.from({ length: onBoard }, () => "board" as const),
-            ...Array.from({ length: done }, () => "done" as const),
-          ];
-          let firstReserve = true;
-          // The stone that just returned to reserve (last reserve stone) or just scored (last finished stone).
-          const returnedIdx = effect?.captured && effect.player !== p ? waiting - 1 : -1;
-          const scoredIdx = effect?.scored && effect.player === p ? stones.length - 1 : -1;
-          return (
-            <div key={p} className="stock" data-testid={`stock-${p}`}>
-              <strong>{playerName(p)}</strong>
-              <div className="stones" role="group" aria-label={`${playerName(p)} stones: ${waiting} in reserve, ${onBoard} on the board, ${done} finished`}>
-                {stones.map((kind, i) => {
-                  const cls = `piece piece-${p} stone stone-${kind}`;
-                  if (kind === "reserve" && firstReserve && enter !== undefined) {
-                    firstReserve = false;
-                    return (
-                      <button key={i} type="button" className={`${cls} piece-movable`} aria-label="Enter a piece" onClick={() => move(enter)} />
-                    );
-                  }
-                  firstReserve = false;
-                  const text = { reserve: "Stone in reserve", board: "Stone on the board", done: "Finished stone" }[kind];
-                  const unavailable = kind === "reserve" && choosing;
-                  const fx = i === returnedIdx ? " stone-returned" : i === scoredIdx ? " stone-scored" : "";
-                  return (
-                    <span
-                      key={i}
-                      className={`${cls}${unavailable ? " stone-unavailable" : ""}${fx}`}
-                      role="img"
-                      aria-label={unavailable ? `${text}, cannot enter with this roll` : text}
-                    />
-                  );
-                })}
-              </div>
-              <span>Waiting: {waiting}</span>
-              <span>On board: {onBoard}</span>
-              <span>Finished: {done}</span>
-              {enter !== undefined && <span className="muted">Select a highlighted stone to enter the board.</span>}
-            </div>
-          );
-        })}
+      <div className="hud-dice">
+        {!won && (
+          <DiceTray
+            roll={lastRoll}
+            rolling={rolling}
+            canRoll={canRoll}
+            onRoll={roll}
+            rollerName={lastRoll ? playerName(lastRoll.player) : undefined}
+            hint={diceHint}
+          />
+        )}
       </div>
 
       <div className="controls">
-        <button type="button" className="control" onClick={restart}>
+        <button type="button" className={`control${won ? " control-primary" : ""}`} onClick={restart}>
           {won ? "Play again" : "Restart"}
         </button>
         <Link href="/" className="link">

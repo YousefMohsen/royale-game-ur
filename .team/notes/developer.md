@@ -32,3 +32,6 @@ _None yet._
 
 <!-- run:cmwobxh4w00r08onnavgtwifd -->
 - 2026-11-20 (#28): Dice UI lives in components/dice-tray.tsx; game-board.tsx holds lastRoll {value,player,id} and a `rolling` flag (ROLL_MS) that locks moves/computer until the tumble ends; full-game e2e uses emulateMedia reducedMotion to skip it. Kill stray `next dev` (via /proc) before pnpm test:e2e; use PLAYWRIGHT_BROWSERS_PATH=/ms-playwright.
+
+<!-- run:cmwocen2t00ta8onn6nyva7ih -->
+- 2026-11-20 (#27): HUD (#27): layout is CSS grid areas in the 'Play HUD' section at the end of app/globals.css (.page-play .game); panels are renderPanel() in components/game-board.tsx; e2e reads stock counts with regexes like /Waiting\s*6/. Run pnpm install --frozen-lockfile --store-dir /tmp/pnpm-store first in a fresh container.

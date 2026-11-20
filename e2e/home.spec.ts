@@ -50,6 +50,7 @@ test("rules page has a logical heading structure", async ({ page }) => {
 test("rules open in a new tab and keep the game unchanged", async ({ page, context }) => {
   await page.goto("/play?mode=human");
   await page.getByRole("button", { name: "Roll dice" }).click();
+  await expect(page.getByTestId("game-status")).toContainText("rolled");
   const status = await page.getByTestId("game-status").innerText();
   const [rules] = await Promise.all([
     context.waitForEvent("page"),

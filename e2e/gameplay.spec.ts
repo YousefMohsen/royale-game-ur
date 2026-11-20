@@ -34,7 +34,7 @@ test("Human vs Human: rolling then moving hands the turn to the other player", a
   // Square 4 is a rosette, so the same player rolls again.
   await expect(page.getByTestId("game-status")).toContainText("rosette");
   await expect(page.getByTestId("current-player")).toContainText("Player one");
-  await expect(page.getByTestId("stock-one")).toContainText("Waiting: 6");
+  await expect(page.getByTestId("stock-one")).toContainText(/Waiting\s*6/);
 });
 
 test("each player sees seven stones and can select a reserve stone", async ({ page }) => {
@@ -47,7 +47,7 @@ test("each player sees seven stones and can select a reserve stone", async ({ pa
   await expect(page.getByTestId("stock-one").getByRole("img", { name: /cannot enter/ })).toHaveCount(6);
   await page.getByTestId("stock-one").getByRole("button", { name: "Enter a piece" }).focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("stock-one")).toContainText("On board: 1");
+  await expect(page.getByTestId("stock-one")).toContainText(/On board\s*1/);
 });
 
 test("illegal actions are prevented", async ({ page }) => {
@@ -102,7 +102,7 @@ test("a full game ends with a winner and can be restarted", async ({ page }) => 
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(page.getByTestId("game-status")).toContainText("New game started");
   await expect(page.getByTestId("current-player")).toContainText("Player one's turn");
-  await expect(page.getByTestId("stock-one")).toContainText("Finished: 0");
+  await expect(page.getByTestId("stock-one")).toContainText(/Finished\s*0/);
   await expect(rollButton(page)).toBeEnabled();
 });
 
@@ -125,4 +125,28 @@ test("reduced motion reveals the roll result immediately", async ({ page }) => {
   await rollButton(page).click();
   await expect(page.getByTestId("roll-result")).toHaveText("Roll: 4", { timeout: 300 });
   await expect(page.getByTestId("dice-tray")).not.toHaveAttribute("data-rolling", "true");
+});
+
+test("laptop viewport shows board, panels, dice and roll action together without scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 700 });
+  await fixDice(page, 0.1);
+  await page.goto("/play?mode=human");
+  for (const id of ["current-player", "game-status", "stock-one", "stock-two", "dice-tray"]) {
+    await expect(page.getByTestId(id)).toBeInViewport({ ratio: 1 });
+  }
+  await expect(page.getByRole("group", { name: /Board/ })).toBeInViewport({ ratio: 1 });
+  await expect(rollButton(page)).toBeInViewport({ ratio: 1 });
+  await rollButton(page).click();
+  await expect(page.getByTestId("roll-result")).toHaveText("Roll: 4");
+  await expect(page.getByTestId("stock-one")).toContainText("Choose a stone to enter");
+  await expect(page.getByRole("button", { name: "Enter a piece" })).toBeInViewport({ ratio: 1 });
+});
+
+test("phone viewport keeps the board, dice and roll button on the first screen", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await fixDice(page, 0.1);
+  await page.goto("/play?mode=human");
+  await expect(page.getByRole("group", { name: /Board/ })).toBeInViewport({ ratio: 1 });
+  await expect(rollButton(page)).toBeInViewport({ ratio: 1 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
