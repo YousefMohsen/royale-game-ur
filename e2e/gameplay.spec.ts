@@ -37,6 +37,19 @@ test("Human vs Human: rolling then moving hands the turn to the other player", a
   await expect(page.getByTestId("stock-one")).toContainText("Waiting: 6");
 });
 
+test("each player sees seven stones and can select a reserve stone", async ({ page }) => {
+  await fixDice(page, 0.1);
+  await page.goto("/play?mode=human");
+  await expect(page.getByTestId("stock-one").getByRole("img", { name: "Stone in reserve" })).toHaveCount(7);
+  await expect(page.getByTestId("stock-two").getByRole("img", { name: "Stone in reserve" })).toHaveCount(7);
+  await rollButton(page).click();
+  await expect(page.getByTestId("stock-one").getByRole("button", { name: "Enter a piece" })).toBeVisible();
+  await expect(page.getByTestId("stock-one").getByRole("img", { name: /cannot enter/ })).toHaveCount(6);
+  await page.getByTestId("stock-one").getByRole("button", { name: "Enter a piece" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("stock-one")).toContainText("On board: 1");
+});
+
 test("illegal actions are prevented", async ({ page }) => {
   await fixDice(page, 0.1);
   await page.goto("/play?mode=human");

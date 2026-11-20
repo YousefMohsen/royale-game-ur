@@ -427,3 +427,36 @@ h1 {
 .rules li + li {
   margin-top: var(--space-2);
 }
+
+/* Reserve stones: each player's seven stones, grouped as reserve, on board and finished. */
+.stones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.stone {
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.stone-board {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.stone-done {
+  opacity: 0.8;
+  filter: saturate(0.6);
+}
+
+.stone-unavailable {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+  cursor: not-allowed;
+}
+
+button.stone {
+  min-width: 2.75rem;
+}
