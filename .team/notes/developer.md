@@ -11,3 +11,6 @@ _None yet._
 
 <!-- run:cmwo86k6k005m8onn5ml0l4bz -->
 - 2026-11-20 (#4): UI actions go through lib/turns.ts (rollTurn/moveTurn never throw; illegal actions return the unchanged state). Board geometry lives in lib/board.ts. tsconfig has noUncheckedIndexedAccess.
+
+<!-- run:cmwo8mqvw00888onn6j3ny4lg -->
+- 2026-11-20 (#6): Computer AI lives in lib/ai.ts (chooseMove/scoreMove, pure); game-board.tsx drives it via a useEffect timer (COMPUTER_DELAY_MS).
