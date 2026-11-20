@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { chooseMove } from "@/lib/ai";
 import { BOARD_COLS, BOARD_ROWS, cellFor, isRosetteCell, isVoidCell } from "@/lib/board";
-import { FINISH, START, type Player } from "@/lib/game";
+import { FINISH, PIECES_PER_PLAYER, START, type Player } from "@/lib/game";
 import { newLocalGame, type GameMode } from "@/lib/modes";
 import { describeMove, moveTurn, pendingMoves, playerName, rollTurn, type MoveEffect } from "@/lib/turns";
 
@@ -140,17 +140,44 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         {PLAYERS.map((p) => {
           const waiting = state.pieces[p].filter((pos) => pos === START).length;
           const done = state.pieces[p].filter((pos) => pos === FINISH).length;
+          const onBoard = PIECES_PER_PLAYER - waiting - done;
           const enter = p === state.turn ? movableFrom.get(START) : undefined;
+          const choosing = p === state.turn && !computerTurn && state.status.kind === "awaiting-move";
+          const stones: ("reserve" | "board" | "done")[] = [
+            ...Array.from({ length: waiting }, () => "reserve" as const),
+            ...Array.from({ length: onBoard }, () => "board" as const),
+            ...Array.from({ length: done }, () => "done" as const),
+          ];
+          let firstReserve = true;
           return (
             <div key={p} className="stock" data-testid={`stock-${p}`}>
               <strong>{playerName(p)}</strong>
+              <div className="stones" role="group" aria-label={`${playerName(p)} stones: ${waiting} in reserve, ${onBoard} on the board, ${done} finished`}>
+                {stones.map((kind, i) => {
+                  const cls = `piece piece-${p} stone stone-${kind}`;
+                  if (kind === "reserve" && firstReserve && enter !== undefined) {
+                    firstReserve = false;
+                    return (
+                      <button key={i} type="button" className={`${cls} piece-movable`} aria-label="Enter a piece" onClick={() => move(enter)} />
+                    );
+                  }
+                  firstReserve = false;
+                  const text = { reserve: "Stone in reserve", board: "Stone on the board", done: "Finished stone" }[kind];
+                  const unavailable = kind === "reserve" && choosing;
+                  return (
+                    <span
+                      key={i}
+                      className={`${cls}${unavailable ? " stone-unavailable" : ""}`}
+                      role="img"
+                      aria-label={unavailable ? `${text}, cannot enter with this roll` : text}
+                    />
+                  );
+                })}
+              </div>
               <span>Waiting: {waiting}</span>
+              <span>On board: {onBoard}</span>
               <span>Finished: {done}</span>
-              {enter !== undefined && (
-                <button type="button" className="control" onClick={() => move(enter)}>
-                  Enter a piece
-                </button>
-              )}
+              {enter !== undefined && <span className="muted">Select a highlighted stone to enter the board.</span>}
             </div>
           );
         })}
