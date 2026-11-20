@@ -167,6 +167,13 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
             Roll: {lastRoll}
           </span>
         )}
+        {lastRoll !== undefined && !won && (
+          <span key={`dice-${rollCount}`} className="dice roll-result" aria-hidden="true">
+            {[0, 1, 2, 3].map((i) => (
+              <span key={i} className={`die${i < lastRoll ? " die-marked" : ""}`} />
+            ))}
+          </span>
+        )}
         <button type="button" className="control" onClick={restart}>
           {won ? "Play again" : "Restart"}
         </button>
