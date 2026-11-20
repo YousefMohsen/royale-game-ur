@@ -26,3 +26,6 @@ _None yet._
 
 <!-- run:cmwoah72100j78onnjow15fey -->
 - 2026-11-20 (#21): Move feedback (#21): MoveEffect in lib/turns.ts now carries from/rosette/scored; the board slides pieces via --slide-x/--slide-y CSS vars, and the reduced-motion block at the end of app/globals.css replaces animations with static rings.
+
+<!-- run:cmwobb3mf00n28onnholcdenl -->
+- 2026-11-20 (#25): Board cells carry data-lane/data-pattern/data-cue (components/game-board.tsx); tile motifs, scene background and frieze live in app/globals.css (#25).
