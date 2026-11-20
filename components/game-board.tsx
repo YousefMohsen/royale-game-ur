@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { chooseMove } from "@/lib/ai";
 import { BOARD_COLS, BOARD_ROWS, cellFor, isRosetteCell, isVoidCell } from "@/lib/board";
 import { FINISH, PIECES_PER_PLAYER, START, type Player } from "@/lib/game";
@@ -11,6 +11,11 @@ import { describeMove, moveTurn, pendingMoves, playerName, rollTurn, type MoveEf
 const PLAYERS: readonly Player[] = ["one", "two"];
 /** Pause before each computer action so players can follow what happened. */
 const COMPUTER_DELAY_MS = 800;
+
+/** Offset (in cells) a piece slides from; the CSS animation moves it to its own square. */
+function slideStyle(slide: { dx: number; dy: number } | undefined): CSSProperties | undefined {
+  return slide ? ({ "--slide-x": slide.dx, "--slide-y": slide.dy } as CSSProperties) : undefined;
+}
 
 export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
   const [state, setState] = useState(() => newLocalGame(mode).state);
@@ -91,6 +96,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
       );
       let position = 0;
       let arrived = false;
+      let slide: { dx: number; dy: number } | undefined;
       let label = "Empty square";
       if (owner) {
         const idx = state.pieces[owner].findIndex((pos) => {
@@ -100,20 +106,25 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
         position = state.pieces[owner][idx] ?? START;
         label = `${playerName(owner)} piece`;
         arrived = effect?.player === owner && effect.position === position;
+        if (arrived && effect) {
+          const origin = cellFor(owner, effect.from);
+          if (origin) slide = { dx: origin.col - col, dy: origin.row - row };
+        }
       }
       const movablePiece = owner === state.turn ? movableFrom.get(position) : undefined;
       cells.push(
-        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}`} data-rosette={isRosetteCell(row, col) || undefined}>
+        <div key={`${row}-${col}`} className={`cell${owner ? "" : " cell-empty"}${owner && arrived && effect?.captured ? " cell-capture" : ""}${owner && arrived && effect?.rosette ? " cell-rosette-land" : ""}`} data-rosette={isRosetteCell(row, col) || undefined}>
           {owner &&
             (movablePiece !== undefined ? (
               <button
                 type="button"
                 className={`piece piece-${owner} piece-movable${arrived ? " piece-arrived" : ""}`}
+                style={slideStyle(slide)}
                 aria-label={`${label} on square ${position}. Move ${state.status.kind === "awaiting-move" ? state.status.roll : 0} squares`}
                 onClick={() => move(movablePiece)}
               />
             ) : (
-              <span className={`piece piece-${owner}${arrived ? " piece-arrived" : ""}`} role="img" aria-label={label} />
+              <span className={`piece piece-${owner}${arrived ? " piece-arrived" : ""}`} style={slideStyle(slide)} role="img" aria-label={label} />
             ))}
         </div>,
       );
@@ -149,6 +160,9 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
             ...Array.from({ length: done }, () => "done" as const),
           ];
           let firstReserve = true;
+          // The stone that just returned to reserve (last reserve stone) or just scored (last finished stone).
+          const returnedIdx = effect?.captured && effect.player !== p ? waiting - 1 : -1;
+          const scoredIdx = effect?.scored && effect.player === p ? stones.length - 1 : -1;
           return (
             <div key={p} className="stock" data-testid={`stock-${p}`}>
               <strong>{playerName(p)}</strong>
@@ -164,10 +178,11 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
                   firstReserve = false;
                   const text = { reserve: "Stone in reserve", board: "Stone on the board", done: "Finished stone" }[kind];
                   const unavailable = kind === "reserve" && choosing;
+                  const fx = i === returnedIdx ? " stone-returned" : i === scoredIdx ? " stone-scored" : "";
                   return (
                     <span
                       key={i}
-                      className={`${cls}${unavailable ? " stone-unavailable" : ""}`}
+                      className={`${cls}${unavailable ? " stone-unavailable" : ""}${fx}`}
                       role="img"
                       aria-label={unavailable ? `${text}, cannot enter with this roll` : text}
                     />
