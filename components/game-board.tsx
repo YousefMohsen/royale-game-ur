@@ -168,7 +168,7 @@ export function GameBoard({ mode }: Readonly<{ mode: GameMode }>) {
           </span>
         )}
         {lastRoll !== undefined && !won && (
-          <span key={`dice-${rollCount}`} className="dice roll-result" aria-hidden="true">
+          <span key={`dice-${rollCount}`} className="dice" aria-hidden="true">
             {[0, 1, 2, 3].map((i) => (
               <span key={i} className={`die${i < lastRoll ? " die-marked" : ""}`} />
             ))}

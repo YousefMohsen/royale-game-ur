@@ -320,7 +320,10 @@ h1 {
 
 .dice {
   display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: var(--space-2);
+  animation: roll-pop var(--duration-normal) var(--ease-out) both;
 }
 
 /* Each tetrahedral die shows a marked (gold dot) or blank tip. */
